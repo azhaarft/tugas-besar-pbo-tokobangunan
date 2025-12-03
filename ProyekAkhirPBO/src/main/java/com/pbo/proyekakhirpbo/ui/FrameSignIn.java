@@ -205,7 +205,7 @@ public class FrameSignIn extends javax.swing.JFrame {
                 if(BCrypt.checkpw(password, storedHash)){
                     JOptionPane.showMessageDialog(this, "Login Sukses!");
                     
-                    FrameDashboard dashboard = new FrameDashboard();
+                    FrameDashboard dashboard = new FrameDashboard(email);
                     dashboard.setVisible(true);
                     this.dispose();
                 }

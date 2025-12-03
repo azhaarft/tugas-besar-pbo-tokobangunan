@@ -45,7 +45,7 @@ public class FrameProfile extends javax.swing.JFrame {
             java.sql.ResultSet rs = pst.executeQuery();
             
             if(rs.next()){
-                namaField.setText(rs.getString("name"));
+                namaField.setText(rs.getString("nama"));
                 emailField.setText(rs.getString("email"));
                 noHpField.setText(rs.getString("no_telp"));
             }
@@ -240,7 +240,7 @@ public class FrameProfile extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void dashboardBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardBtnActionPerformed
-        FrameDashboard dashboard = new FrameDashboard();
+        FrameDashboard dashboard = new FrameDashboard(currentEmail);
         dashboard.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_dashboardBtnActionPerformed
