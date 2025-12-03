@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.pbo.proyekakhirpbo;
+package com.pbo.proyekakhirpbo.ui;
 
 /**
  *
@@ -51,7 +51,6 @@ public class FrameDashboard extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(735, 565));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 

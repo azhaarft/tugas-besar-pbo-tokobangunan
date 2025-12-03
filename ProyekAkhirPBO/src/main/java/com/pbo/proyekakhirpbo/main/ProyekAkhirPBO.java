@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package com.pbo.proyekakhirpbo;
+package com.pbo.proyekakhirpbo.main;
 
 /**
  *
