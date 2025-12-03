@@ -8,15 +8,52 @@ package com.pbo.proyekakhirpbo.ui;
  *
  * @author acer
  */
+
+import com.pbo.proyekakhirpbo.db.Konektor; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 public class FrameProfile extends javax.swing.JFrame {
+    
+    private String currentEmail;
+    
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrameProfile.class.getName());
 
     /**
      * Creates new form FrameProfile
      */
-    public FrameProfile() {
+    public FrameProfile(String email) {
+        this.currentEmail = email;
         initComponents();
+        loadProfileData();
+    }
+    public FrameProfile(){
+        initComponents();
+    }
+    
+    private void loadProfileData(){
+        try{
+            java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+            
+            String sql = "SELECT * FROM user WHERE email = ?";
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, currentEmail);
+            
+            java.sql.ResultSet rs = pst.executeQuery();
+            
+            if(rs.next()){
+                namaField.setText(rs.getString("name"));
+                emailField.setText(rs.getString("email"));
+                noHpField.setText(rs.getString("no_telp"));
+            }
+        }
+        catch(Exception e)
+        {  
+            javax.swing.JOptionPane.showMessageDialog(this, "Error loading profile: " + e.getMessage());
+        }
     }
 
     /**
@@ -31,14 +68,14 @@ public class FrameProfile extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        namaField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        emailField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        noHpField = new javax.swing.JTextField();
+        logoutBtn = new javax.swing.JButton();
+        deleteBtn = new javax.swing.JButton();
+        dashboardBtn = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -51,26 +88,47 @@ public class FrameProfile extends javax.swing.JFrame {
 
         jLabel2.setText("Nama");
 
+        namaField.setEditable(false);
+
         jLabel3.setText("Email");
+
+        emailField.setEditable(false);
 
         jLabel4.setText("No Telepon");
 
-        jButton1.setBackground(new java.awt.Color(0, 32, 64));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Logout");
-
-        jButton2.setBackground(new java.awt.Color(0, 32, 64));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Delete");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        noHpField.setEditable(false);
+        noHpField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                noHpFieldActionPerformed(evt);
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(0, 32, 64));
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Dashboard");
+        logoutBtn.setBackground(new java.awt.Color(0, 32, 64));
+        logoutBtn.setForeground(new java.awt.Color(255, 255, 255));
+        logoutBtn.setText("Logout");
+        logoutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutBtnActionPerformed(evt);
+            }
+        });
+
+        deleteBtn.setBackground(new java.awt.Color(0, 32, 64));
+        deleteBtn.setForeground(new java.awt.Color(255, 255, 255));
+        deleteBtn.setText("Delete");
+        deleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteBtnActionPerformed(evt);
+            }
+        });
+
+        dashboardBtn.setBackground(new java.awt.Color(0, 32, 64));
+        dashboardBtn.setForeground(new java.awt.Color(255, 255, 255));
+        dashboardBtn.setText("Dashboard");
+        dashboardBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dashboardBtnActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("240002 - 240036 - 240060");
 
@@ -80,11 +138,11 @@ public class FrameProfile extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(dashboardBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
@@ -98,9 +156,9 @@ public class FrameProfile extends javax.swing.JFrame {
                                 .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jTextField1)
-                                .addComponent(jTextField2)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))))
+                                .addComponent(namaField)
+                                .addComponent(emailField)
+                                .addComponent(noHpField, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(185, 185, 185)))
@@ -114,20 +172,20 @@ public class FrameProfile extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(namaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(noHpField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(111, 111, 111)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(logoutBtn)
+                    .addComponent(deleteBtn)
+                    .addComponent(dashboardBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addContainerGap())
@@ -147,9 +205,55 @@ public class FrameProfile extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Apakah anda yakin untuk menghapus profile?", 
+            "Konfirmasi", 
+            javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if(confirm == javax.swing.JOptionPane.YES_OPTION){
+            try{
+                java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+                
+                String sql = "DELETE FROM user WHERE email = ?";
+                java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                pst.setString(1, currentEmail);
+                
+                int rowsAffected = pst.executeUpdate();
+            
+                if (rowsAffected > 0) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Akun Berhasil Dihapus.");
+                    FrameSignUp signUp = new FrameSignUp();
+                    signUp.setVisible(true);
+                    this.dispose(); 
+                } 
+            
+                else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus akun.");
+                }
+            }
+            catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+            
+        }
+    }//GEN-LAST:event_deleteBtnActionPerformed
+
+    private void dashboardBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardBtnActionPerformed
+        FrameDashboard dashboard = new FrameDashboard();
+        dashboard.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_dashboardBtnActionPerformed
+
+    private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
+        FrameSignIn signIn = new FrameSignIn();
+        signIn.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_logoutBtnActionPerformed
+
+    private void noHpFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noHpFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_noHpFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -177,17 +281,17 @@ public class FrameProfile extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton dashboardBtn;
+    private javax.swing.JButton deleteBtn;
+    private javax.swing.JTextField emailField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JButton logoutBtn;
+    private javax.swing.JTextField namaField;
+    private javax.swing.JTextField noHpField;
     // End of variables declaration//GEN-END:variables
 }
