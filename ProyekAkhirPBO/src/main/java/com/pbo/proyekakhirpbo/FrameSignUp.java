@@ -61,8 +61,6 @@ public class FrameSignUp extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Sistem Manajemen & Penjualan");
 
-        jLabel8.setText("jLabel8");
-
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("240002 - 240036 - 240060");
 
