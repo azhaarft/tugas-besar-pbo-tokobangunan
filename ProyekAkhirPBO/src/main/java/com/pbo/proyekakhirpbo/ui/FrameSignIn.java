@@ -188,7 +188,7 @@ public class FrameSignIn extends javax.swing.JFrame {
         
         if(email.isEmpty()||password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Harap isi Email dan Password");
-            
+            return;
         }
         
         try{

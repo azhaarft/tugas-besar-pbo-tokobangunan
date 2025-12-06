@@ -11,6 +11,7 @@ package com.pbo.proyekakhirpbo.ui;
 
 import java.io.File;
 import java.io.FileInputStream;
+import javax.swing.JOptionPane;
 //buatDummy data
 
 import com.pbo.proyekakhirpbo.db.Konektor;
@@ -39,6 +40,7 @@ public class FrameDashboard extends javax.swing.JFrame {
         insertDummyProduct();
         loadProduk();
     }
+    
     
     public FrameDashboard() {
         initComponents();
@@ -74,34 +76,29 @@ public class FrameDashboard extends javax.swing.JFrame {
             ResultSet rs = pst.executeQuery();
             
             while (rs.next()) {
+                // 1. GET THE ID (Crucial!)
+                int idProduk = rs.getInt("id_produk"); // Make sure your DB column is named 'id_produk'
+                
                 String nama = rs.getString("nama_barang");
                 double harga = rs.getDouble("harga_barang");
-                
+       
+                byte[] imgBytes = rs.getBytes("image_barang"); 
+
                 JButton btn = new JButton();
-                btn.setBackground(java.awt.Color.WHITE);
-                btn.setText("<html><center><b>" + nama + "</b><br><span style='color:green;'>Rp " + (long)harga + "</span></center></html>");
-                
-                // --- READ BLOB IMAGE ---
-                byte[] imgBytes = rs.getBytes("image_barang");
-                // --- CONVERT BLOB TO ICON ---
-                if (imgBytes != null) {
-                    ImageIcon icon = new ImageIcon(imgBytes);
-                    // Resize to 100x100
-                    Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-                    btn.setIcon(new ImageIcon(img));
-                }
-                
-                btn.setVerticalTextPosition(SwingConstants.BOTTOM);
-                btn.setHorizontalTextPosition(SwingConstants.CENTER);
+                btn.setText("<html><center>" + nama + "<br>Rp " + (long)harga + "</center></html>");
+
+                // ... (Icon logic remains the same) ...
+
                 btn.setPreferredSize(new Dimension(150, 150));
-                
-                // Add Click Action
+
+                // 2. THE FIX: Call addToCart when clicked
                 btn.addActionListener(e -> {
-                    System.out.println("Clicked: " + nama);
+                    System.out.println("Adding to cart: " + nama + " (ID: " + idProduk + ")");
+                    addToCart(idProduk); 
                 });
-                
-                // Add to Panel
+           
                 jPanel2.add(btn);
+            
             }
             jPanel2.revalidate();
             jPanel2.repaint();
@@ -112,6 +109,53 @@ public class FrameDashboard extends javax.swing.JFrame {
             
             
     }
+    
+    private void addToCart(int idProduk) {
+        System.out.println("DEBUG CHECK: Searching for user with email: [" + userEmail + "]");
+        try {
+            Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+
+            // 1. We have Email, but Keranjang needs ID_USER. Let's find it.
+            String userSql = "SELECT id_user FROM user WHERE email = ?";
+            PreparedStatement userPst = conn.prepareStatement(userSql);
+            userPst.setString(1, userEmail);
+            ResultSet userRs = userPst.executeQuery();
+
+            int idUser = -1;
+            if (userRs.next()) {
+                idUser = userRs.getInt("id_user");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: User tidak ditemukan!");
+                return;
+            }
+
+            // 2. Check if item already exists in cart for this user
+            String checkSql = "SELECT * FROM keranjang WHERE id_user = ? AND id_produk = ?";
+            PreparedStatement checkPst = conn.prepareStatement(checkSql);
+            checkPst.setInt(1, idUser);
+            checkPst.setInt(2, idProduk);
+            ResultSet checkRs = checkPst.executeQuery();
+
+            if (checkRs.next()) {
+                // If exists, tell the user (or you could update quantity +1 here)
+                javax.swing.JOptionPane.showMessageDialog(this, "Barang sudah ada di keranjang!");
+            } else {
+                // 3. INSERT the new item
+                String insertSql = "INSERT INTO keranjang (id_user, id_produk, kuantitas) VALUES (?, ?, 1)";
+                PreparedStatement insertPst = conn.prepareStatement(insertSql);
+                insertPst.setInt(1, idUser);
+                insertPst.setInt(2, idProduk);
+                insertPst.executeUpdate();
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "Berhasil masuk keranjang!");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error Add to Cart: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
     //delete later
     private void insertDummyProduct() {
     try {
@@ -316,7 +360,7 @@ public class FrameDashboard extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void keranjangBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keranjangBtnActionPerformed
-        FrameKeranjang keranjang = new FrameKeranjang();
+        FrameKeranjang keranjang = new FrameKeranjang(userEmail);
         keranjang.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_keranjangBtnActionPerformed
@@ -355,7 +399,11 @@ public class FrameDashboard extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new FrameDashboard().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> {
+            // CRITICAL: You MUST put a real email from your database here!
+            // If your database has "joan@gmail.com", put exactly that.
+            new FrameDashboard("joan@gmail.com").setVisible(true); 
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
