@@ -239,6 +239,7 @@ public class FrameDashboard extends javax.swing.JFrame {
         searchBtn.setText("Search");
 
         jScrollPane1.setBackground(new java.awt.Color(0, 32, 64));
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jPanel2.setBackground(new java.awt.Color(0, 32, 64));
 
