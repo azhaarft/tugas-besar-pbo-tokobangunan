@@ -4,6 +4,9 @@
  */
 package com.pbo.proyekakhirpbo.ui;
 
+import java.awt.BorderLayout;
+
+
 /**
  *
  * @author Asus
@@ -19,6 +22,21 @@ public class FrameAdmin extends javax.swing.JFrame {
         initComponents();
         panelKosong.setLayout(new java.awt.BorderLayout());
     }
+    public FrameAdmin(String email) {
+        initComponents();
+        this.setSize(1100, 600);
+        this.setLocationRelativeTo(null); 
+    }
+    
+    public void showDashboard() {
+        PanelDashboard dashboard = new PanelDashboard();
+        panelKosong.removeAll();
+        panelKosong.setLayout(new BorderLayout());
+        panelKosong.add(dashboard, BorderLayout.CENTER);
+        panelKosong.revalidate();
+        panelKosong.repaint();
+    }
+
 
 
     /**
@@ -50,9 +68,9 @@ public class FrameAdmin extends javax.swing.JFrame {
         panelAdmin.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelAdmin.setPreferredSize(new java.awt.Dimension(200, 565));
 
-        AdminPanel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        AdminPanel.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         AdminPanel.setForeground(new java.awt.Color(255, 255, 255));
-        AdminPanel.setText("Admin Panel");
+        AdminPanel.setText("Admin Page");
 
         dashboardClick.setBackground(new java.awt.Color(0, 32, 64));
         dashboardClick.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -61,7 +79,7 @@ public class FrameAdmin extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Dashboard");
 
@@ -89,7 +107,7 @@ public class FrameAdmin extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Kelola Barang");
 
@@ -117,7 +135,7 @@ public class FrameAdmin extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Kelola Transaksi");
 
@@ -145,7 +163,7 @@ public class FrameAdmin extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Logout");
 
@@ -173,7 +191,7 @@ public class FrameAdmin extends javax.swing.JFrame {
             .addGroup(panelAdminLayout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(AdminPanel)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
             .addComponent(dashboardClick, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(barangClick, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(transaksiClick, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -182,9 +200,9 @@ public class FrameAdmin extends javax.swing.JFrame {
         panelAdminLayout.setVerticalGroup(
             panelAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAdminLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addGap(32, 32, 32)
                 .addComponent(AdminPanel)
-                .addGap(85, 85, 85)
+                .addGap(72, 72, 72)
                 .addComponent(dashboardClick, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(barangClick, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -200,7 +218,13 @@ public class FrameAdmin extends javax.swing.JFrame {
         panelKosong.setBackground(new java.awt.Color(255, 255, 255));
         panelKosong.setLayout(new java.awt.BorderLayout());
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Welcome, Admin!");
+        jLabel1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                jLabel1ComponentHidden(evt);
+            }
+        });
         panelKosong.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
         getContentPane().add(panelKosong, java.awt.BorderLayout.CENTER);
@@ -235,8 +259,12 @@ private void gantiHalaman(javax.swing.JPanel halamanBaru) {
     private void logoutClickMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutClickMouseClicked
         this.dispose(); 
 
-        new FrameSignUp().setVisible(true);
+        new FrameSignIn().setVisible(true);
     }//GEN-LAST:event_logoutClickMouseClicked
+
+    private void jLabel1ComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jLabel1ComponentHidden
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel1ComponentHidden
 
     /**
      * @param args the command line arguments

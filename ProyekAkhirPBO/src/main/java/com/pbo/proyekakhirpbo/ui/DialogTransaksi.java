@@ -78,7 +78,7 @@ public class DialogTransaksi extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Nama Produk", "Harga@", "Qty", "Subtotal"
+                "Nama Produk", "Harga", "Qty", "Subtotal"
             }
         ));
         jScrollPane1.setViewportView(tebalTDetail);
