@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package com.pbo.proyekakhirpbo;
+package com.pbo.proyekakhirpbo.ui;
 
 /**
  *
@@ -39,7 +39,6 @@ public class DialogTransaksi extends javax.swing.JDialog {
         tebalTDetail = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(426, 365));
 
         panelTransaksi.setBackground(new java.awt.Color(255, 255, 255));
         panelTransaksi.setPreferredSize(new java.awt.Dimension(426, 365));

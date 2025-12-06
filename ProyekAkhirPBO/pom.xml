@@ -5,24 +5,18 @@
     <artifactId>ProyekAkhirPBO</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE270</version>
         </dependency>
-    </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>com.pbo.proyekakhirpbo.ProyekAkhirPBO</exec.mainClass>
-    </properties>
-    <dependencies>
+
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.5.0</version>
-        </dependency>
+            <version>9.0.0</version> </dependency>
         
         <dependency>
             <groupId>org.mindrot</groupId>
@@ -30,4 +24,10 @@
             <version>0.4</version>
         </dependency>
     </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>24</maven.compiler.release>
+        <exec.mainClass>com.pbo.proyekakhirpbo.ProyekAkhirPBO</exec.mainClass>
+    </properties>
 </project>
