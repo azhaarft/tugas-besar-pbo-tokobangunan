@@ -74,6 +74,7 @@ public class PanelBarang extends javax.swing.JPanel {
         cariBarangButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelBarangButton = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(535, 565));
@@ -130,6 +131,8 @@ public class PanelBarang extends javax.swing.JPanel {
         tabelBarangButton.setRowHeight(30);
         jScrollPane1.setViewportView(tabelBarangButton);
 
+        jLabel1.setText("240002 - 240036 - 240060");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -152,7 +155,10 @@ public class PanelBarang extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addComponent(cariBarangField)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cariBarangButton)))
+                                .addComponent(cariBarangButton))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(12, 12, 12))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -168,8 +174,10 @@ public class PanelBarang extends javax.swing.JPanel {
                     .addComponent(cariBarangField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cariBarangButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(19, 19, 19))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -291,6 +299,7 @@ public class PanelBarang extends javax.swing.JPanel {
     private javax.swing.JTextField cariBarangField;
     private javax.swing.JButton editBarangButton;
     private javax.swing.JButton hapusBarangButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel kelolaDataBarang;

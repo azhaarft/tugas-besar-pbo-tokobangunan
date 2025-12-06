@@ -50,6 +50,7 @@ public class DialogTambahBarang extends javax.swing.JDialog {
         gambarBField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         deskripsiArea = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -104,6 +105,8 @@ public class DialogTambahBarang extends javax.swing.JDialog {
         deskripsiArea.setRows(5);
         jScrollPane1.setViewportView(deskripsiArea);
 
+        jLabel1.setText("240002 - 240032 - 240060");
+
         javax.swing.GroupLayout panelTambahLayout = new javax.swing.GroupLayout(panelTambah);
         panelTambah.setLayout(panelTambahLayout);
         panelTambahLayout.setHorizontalGroup(
@@ -136,7 +139,10 @@ public class DialogTambahBarang extends javax.swing.JDialog {
                                         .addComponent(gambarBField, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(panelTambahLayout.createSequentialGroup()
                                         .addGap(41, 41, 41)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                            .addGroup(panelTambahLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(panelTambahLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(simpanButton)))
@@ -159,19 +165,21 @@ public class DialogTambahBarang extends javax.swing.JDialog {
                     .addComponent(stokLabel)
                     .addComponent(stokBField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelTambahLayout.createSequentialGroup()
                         .addComponent(deskripsiLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelTambahLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTambahLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(gambarBField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(gambarLabel))
                         .addGap(34, 34, 34)
-                        .addComponent(simpanButton)
-                        .addGap(42, 42, 42))))
+                        .addComponent(simpanButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addGap(20, 20, 20))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -313,6 +321,7 @@ public class DialogTambahBarang extends javax.swing.JDialog {
     private javax.swing.JLabel gambarLabel;
     private javax.swing.JTextField hargaBField;
     private javax.swing.JLabel hargaBarang;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

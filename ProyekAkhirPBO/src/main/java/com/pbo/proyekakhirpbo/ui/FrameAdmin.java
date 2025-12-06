@@ -60,6 +60,7 @@ public class FrameAdmin extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         panelKosong = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(735, 565));
@@ -227,6 +228,9 @@ public class FrameAdmin extends javax.swing.JFrame {
         });
         panelKosong.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
+        jLabel2.setText("240002 - 240036 - 240060");
+        panelKosong.add(jLabel2, java.awt.BorderLayout.PAGE_END);
+
         getContentPane().add(panelKosong, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -296,6 +300,7 @@ private void gantiHalaman(javax.swing.JPanel halamanBaru) {
     private javax.swing.JPanel barangClick;
     private javax.swing.JPanel dashboardClick;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
