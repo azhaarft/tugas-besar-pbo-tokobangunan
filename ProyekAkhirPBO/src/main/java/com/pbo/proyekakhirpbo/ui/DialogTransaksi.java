@@ -3,13 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package com.pbo.proyekakhirpbo.ui;
-
+import com.pbo.proyekakhirpbo.db.Konektor;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Asus
  */
 public class DialogTransaksi extends javax.swing.JDialog {
-    
+    private String idTransaksi;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DialogTransaksi.class.getName());
 
     /**
@@ -17,11 +22,44 @@ public class DialogTransaksi extends javax.swing.JDialog {
      */
     public DialogTransaksi(java.awt.Frame parent, boolean modal, String id) {
         super(parent, modal);
+        this.idTransaksi = id; // Save the ID
         initComponents();
-        this.setSize(450, 400);
-        System.out.println("Membuka detail untuk ID: " + id);
+        this.setSize(500, 500); // Adjust size if needed
+        
+        // Show ID in title or label
+        detailTransaksi.setText("DETAIL TRANSAKSI ID: " + id);
+        
+        // Load the data immediately
+        loadDetail();
     }
+    private void loadDetail() {
+        DefaultTableModel model = (DefaultTableModel) tebalTDetail.getModel();
+        model.setRowCount(0); // Clear table
 
+        try {
+            Connection conn = Konektor.getConnection();
+            // Join detail_transaksi with produk to get product names
+            String sql = "SELECT p.nama_barang, d.harga, d.kuantitas, (d.harga * d.kuantitas) as subtotal " +
+                         "FROM detail_transaksi d " +
+                         "JOIN produk p ON d.id_produk = p.id_produk " +
+                         "WHERE d.id_transaksi = ?";
+            
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, idTransaksi);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                String nama = rs.getString("nama_barang");
+                String harga = String.valueOf((long)rs.getDouble("harga"));
+                String qty = String.valueOf(rs.getInt("kuantitas"));
+                String sub = String.valueOf((long)rs.getDouble("subtotal"));
+
+                model.addRow(new Object[]{ nama, harga, qty, sub });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat detail: " + e.getMessage());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -124,12 +162,28 @@ public class DialogTransaksi extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ubahKeLunasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ubahKeLunasActionPerformed
-        int jawab = javax.swing.JOptionPane.showConfirmDialog(this, "Ubah status transaksi jadi LUNAS?");
+        int jawab = JOptionPane.showConfirmDialog(this, 
+                "Ubah status transaksi ID " + idTransaksi + " menjadi LUNAS?", 
+                "Konfirmasi", 
+                JOptionPane.YES_NO_OPTION);
     
-    if (jawab == javax.swing.JOptionPane.YES_OPTION) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Status Berhasil Diupdate!");
-        this.dispose(); 
-    }
+        if (jawab == JOptionPane.YES_OPTION) {
+            try {
+                Connection conn = Konektor.getConnection();
+                String sql = "UPDATE transaksi SET status = 'Lunas' WHERE id_transaksi = ?";
+                PreparedStatement pst = conn.prepareStatement(sql);
+                pst.setString(1, idTransaksi);
+                
+                int rows = pst.executeUpdate();
+                if (rows > 0) {
+                    JOptionPane.showMessageDialog(this, "Status Berhasil Diupdate!");
+                    this.dispose(); // Close dialog
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error update: " + e.getMessage());
+            }
+        }
+    
     }//GEN-LAST:event_ubahKeLunasActionPerformed
 
     /**

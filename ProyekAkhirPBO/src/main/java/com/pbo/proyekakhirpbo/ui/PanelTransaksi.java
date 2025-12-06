@@ -5,7 +5,12 @@
 package com.pbo.proyekakhirpbo.ui;
 
 import com.pbo.proyekakhirpbo.ui.DialogTransaksi;
-
+import com.pbo.proyekakhirpbo.db.Konektor;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Asus
@@ -17,22 +22,43 @@ public class PanelTransaksi extends javax.swing.JPanel {
      */
     public PanelTransaksi() {
         initComponents();
-        
+        tabelTransaksi.setDefaultEditor(Object.class, null);
         loadData();
     }
     
     private void loadData() {
-    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tabelTransaksi.getModel();
-    
-    // Bersihkan data lama 
-    model.setRowCount(0);
-    
-    // Data Dummy (Nanti ini diganti sama loop Database)
-    model.addRow(new Object[]{ "T001", "Aulia R", "04-12-2025", "150.000", "Lunas", " Detail" });
-    model.addRow(new Object[]{ "T002", "Azhaar F", "05-12-2025", "75.000", "Pending", " Detail" });
-    model.addRow(new Object[]{ "T003", "Joan C", "06-12-2025", "200.000", "Lunas", " Detail" });
+    DefaultTableModel model = (DefaultTableModel) tabelTransaksi.getModel();
+        
+        // 1. CLEAR DUMMY DATA
+        model.setRowCount(0); 
 
-}
+        try {
+            Connection conn = Konektor.getConnection();
+            
+            // 2. QUERY DATABASE
+            // We join 'transaksi' with 'user' to get the name (e.g. "Aulia R") instead of just ID "5"
+            String sql = "SELECT t.id_transaksi, u.nama, t.created_at, t.total, t.status " +
+                         "FROM transaksi t " +
+                         "JOIN user u ON t.id_user = u.id_user " +
+                         "ORDER BY t.created_at DESC";
+                         
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                String id = String.valueOf(rs.getInt("id_transaksi"));
+                String user = rs.getString("nama");
+                String tgl = rs.getString("created_at"); // Matches your DB column 'created_at'
+                String total = String.valueOf((long)rs.getDouble("total"));
+                String status = rs.getString("status");
+
+                // Add to table
+                model.addRow(new Object[]{ id, user, tgl, total, status, "Detail" });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat transaksi: " + e.getMessage());
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -46,9 +72,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
         panelTransaksi = new javax.swing.JPanel();
         kelolaTransaksiBarang = new javax.swing.JLabel();
         cariBarangField = new javax.swing.JTextField();
-        tambahBarangButton = new javax.swing.JButton();
-        editBarangButton = new javax.swing.JButton();
-        hapusBarangButton = new javax.swing.JButton();
+        hapusTransaksiButton = new javax.swing.JButton();
         cariBarangButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelTransaksi = new javax.swing.JTable();
@@ -62,21 +86,23 @@ public class PanelTransaksi extends javax.swing.JPanel {
         kelolaTransaksiBarang.setForeground(new java.awt.Color(0, 32, 64));
         kelolaTransaksiBarang.setText("Kelola Transaksi Barang");
 
-        tambahBarangButton.setBackground(new java.awt.Color(0, 32, 64));
-        tambahBarangButton.setForeground(new java.awt.Color(255, 255, 255));
-        tambahBarangButton.setText("Tambah");
-
-        editBarangButton.setBackground(new java.awt.Color(0, 32, 64));
-        editBarangButton.setForeground(new java.awt.Color(255, 255, 255));
-        editBarangButton.setText("Edit");
-
-        hapusBarangButton.setBackground(new java.awt.Color(0, 32, 64));
-        hapusBarangButton.setForeground(new java.awt.Color(255, 255, 255));
-        hapusBarangButton.setText("Hapus");
+        hapusTransaksiButton.setBackground(new java.awt.Color(0, 32, 64));
+        hapusTransaksiButton.setForeground(new java.awt.Color(255, 255, 255));
+        hapusTransaksiButton.setText("Hapus");
+        hapusTransaksiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusTransaksiButtonActionPerformed(evt);
+            }
+        });
 
         cariBarangButton.setBackground(new java.awt.Color(0, 32, 64));
         cariBarangButton.setForeground(new java.awt.Color(255, 255, 255));
         cariBarangButton.setText("Cari");
+        cariBarangButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cariBarangButtonActionPerformed(evt);
+            }
+        });
 
         tabelTransaksi.setBackground(new java.awt.Color(204, 204, 204));
         tabelTransaksi.setModel(new javax.swing.table.DefaultTableModel(
@@ -113,11 +139,8 @@ public class PanelTransaksi extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTransaksiLayout.createSequentialGroup()
                         .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelTransaksiLayout.createSequentialGroup()
-                                .addComponent(tambahBarangButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(editBarangButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(hapusBarangButton))
+                                .addGap(181, 181, 181)
+                                .addComponent(hapusTransaksiButton))
                             .addComponent(kelolaTransaksiBarang))
                         .addGap(18, 18, 18)
                         .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,9 +163,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
                         .addComponent(jLabel2)
                         .addGap(2, 2, 2)))
                 .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tambahBarangButton)
-                    .addComponent(editBarangButton)
-                    .addComponent(hapusBarangButton)
+                    .addComponent(hapusTransaksiButton)
                     .addComponent(cariBarangField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cariBarangButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -167,28 +188,120 @@ public class PanelTransaksi extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tabelTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelTransaksiMouseClicked
-        int baris = tabelTransaksi.getSelectedRow();
+        if (evt.getClickCount() == 2) {
+            
+            int baris = tabelTransaksi.getSelectedRow();
 
-    if (baris >= 0) {
+            if (baris >= 0) {
+                String idSelected = tabelTransaksi.getValueAt(baris, 0).toString(); 
 
-        DialogTransaksi dialog = new DialogTransaksi(new javax.swing.JFrame(), true, "T001");
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-    }
+                DialogTransaksi dialog = new DialogTransaksi(new javax.swing.JFrame(), true, idSelected);
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+                
+                // Refresh table after dialog closes (in case status changed to Lunas)
+                loadData();
+            }
+        }
     }//GEN-LAST:event_tabelTransaksiMouseClicked
+
+    private void hapusTransaksiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusTransaksiButtonActionPerformed
+        int selectedRow = tabelTransaksi.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih transaksi yang ingin dihapus!");
+            return;
+        }
+
+        // 2. Get the ID (Column 0 is ID Transaksi)
+        String idTrans = tabelTransaksi.getValueAt(selectedRow, 0).toString();
+
+        // 3. Confirm Deletion
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Hapus riwayat transaksi ID: " + idTrans + "?\nData tidak bisa dikembalikan.", 
+                "Konfirmasi Hapus", 
+                javax.swing.JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+                
+                // --- STEP A: Delete the Details first (Safety Step) ---
+                // Even if you have CASCADE on, doing this explicitly is safer in Java code
+                String sqlDetail = "DELETE FROM detail_transaksi WHERE id_transaksi = ?";
+                java.sql.PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
+                pstDetail.setInt(1, Integer.parseInt(idTrans));
+                pstDetail.executeUpdate();
+
+                // --- STEP B: Delete the Header ---
+                String sql = "DELETE FROM transaksi WHERE id_transaksi = ?";
+                java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                pst.setInt(1, Integer.parseInt(idTrans));
+                pst.executeUpdate();
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "Data Transaksi Berhasil Dihapus");
+                
+                // 4. Refresh the Table
+                loadData(); 
+                
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_hapusTransaksiButtonActionPerformed
+
+    private void cariBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBarangButtonActionPerformed
+        String keyword = cariBarangField.getText();
+        
+        // 2. Clear the table before showing results
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tabelTransaksi.getModel();
+        model.setRowCount(0);
+
+        try {
+            java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+            
+            // 3. Search Query
+            // We search in 'transaksi.id_transaksi' OR 'user.nama'
+            String sql = "SELECT t.id_transaksi, u.nama, t.created_at, t.total, t.status " +
+                         "FROM transaksi t " +
+                         "JOIN user u ON t.id_user = u.id_user " +
+                         "WHERE t.id_transaksi LIKE ? OR u.nama LIKE ? " +
+                         "ORDER BY t.created_at DESC";
+            
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, "%" + keyword + "%"); // % allows partial match
+            pst.setString(2, "%" + keyword + "%");
+            
+            java.sql.ResultSet rs = pst.executeQuery();
+
+            // 4. Loop through results and add to table
+            while (rs.next()) {
+                String id = String.valueOf(rs.getInt("id_transaksi"));
+                String user = rs.getString("nama");
+                String tgl = rs.getString("created_at"); 
+                // Format price to remove decimals (e.g. 50000.00 -> 50000)
+                String total = String.valueOf((long)rs.getDouble("total")); 
+                String status = rs.getString("status");
+
+                model.addRow(new Object[]{ id, user, tgl, total, status, "Detail" });
+            }
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pencarian Gagal: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_cariBarangButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cariBarangButton;
     private javax.swing.JTextField cariBarangField;
-    private javax.swing.JButton editBarangButton;
-    private javax.swing.JButton hapusBarangButton;
+    private javax.swing.JButton hapusTransaksiButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel kelolaTransaksiBarang;
     private javax.swing.JPanel panelTransaksi;
     private javax.swing.JTable tabelTransaksi;
-    private javax.swing.JButton tambahBarangButton;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,7 +5,12 @@
 package com.pbo.proyekakhirpbo.ui;
 
 import com.pbo.proyekakhirpbo.ui.DialogTambahBarang;
-
+import com.pbo.proyekakhirpbo.db.Konektor;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Asus
@@ -17,8 +22,40 @@ public class PanelBarang extends javax.swing.JPanel {
      */
     public PanelBarang() {
         initComponents();
+        loadTable();
     }
+    private void loadTable() {
+        // 1. Get the Table Model
+        DefaultTableModel model = (DefaultTableModel) tabelBarangButton.getModel();
+        
+        // 2. Clear existing rows (to prevent duplicates when reloading)
+        model.setRowCount(0);
 
+        try {
+            Connection conn = Konektor.getConnection();
+            Statement stmt = conn.createStatement();
+            String sql = "SELECT * FROM produk";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                // 3. Get Data from DB
+                String id = String.valueOf(rs.getInt("id_produk"));
+                String nama = rs.getString("nama_barang");
+                String stok = String.valueOf(rs.getInt("stok_barang"));
+                String harga = String.valueOf(rs.getDouble("harga_barang"));
+                
+                // For the "Gambar" column, we just put a placeholder text for now
+                // (Displaying real images in a table requires a custom CellRenderer)
+                String gambarInfo = (rs.getBytes("image_barang") != null) ? "Ada Gambar" : "Tidak Ada";
+
+                // 4. Add Row to Table
+                // Order must match your Table Header: "ID. Barang", "Gambar", "Nama Barang", "Stok", "Harga", "Aksi"
+                model.addRow(new Object[]{id, gambarInfo, nama, stok, harga, "Edit/Hapus"});
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -45,8 +82,6 @@ public class PanelBarang extends javax.swing.JPanel {
         kelolaDataBarang.setForeground(new java.awt.Color(0, 32, 64));
         kelolaDataBarang.setText("Kelola Data Barang");
 
-        cariBarangField.setText("Cari...");
-
         tambahBarangButton.setBackground(new java.awt.Color(0, 32, 64));
         tambahBarangButton.setForeground(new java.awt.Color(255, 255, 255));
         tambahBarangButton.setText("Tambah");
@@ -59,14 +94,29 @@ public class PanelBarang extends javax.swing.JPanel {
         editBarangButton.setBackground(new java.awt.Color(0, 32, 64));
         editBarangButton.setForeground(new java.awt.Color(255, 255, 255));
         editBarangButton.setText("Edit");
+        editBarangButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editBarangButtonActionPerformed(evt);
+            }
+        });
 
         hapusBarangButton.setBackground(new java.awt.Color(0, 32, 64));
         hapusBarangButton.setForeground(new java.awt.Color(255, 255, 255));
         hapusBarangButton.setText("Hapus");
+        hapusBarangButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBarangButtonActionPerformed(evt);
+            }
+        });
 
         cariBarangButton.setBackground(new java.awt.Color(0, 32, 64));
         cariBarangButton.setForeground(new java.awt.Color(255, 255, 255));
         cariBarangButton.setText("Cari");
+        cariBarangButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cariBarangButtonActionPerformed(evt);
+            }
+        });
 
         tabelBarangButton.setBackground(new java.awt.Color(204, 204, 204));
         tabelBarangButton.setModel(new javax.swing.table.DefaultTableModel(
@@ -138,13 +188,102 @@ public class PanelBarang extends javax.swing.JPanel {
 
     private void tambahBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBarangButtonActionPerformed
         DialogTambahBarang dialog = new DialogTambahBarang(new javax.swing.JFrame(), true);
-    
-        // 2. Mengatur posisi agar muncul di tengah layar
-        dialog.setLocationRelativeTo(null);
-
-        // 3. Menampilkan dialog
-        dialog.setVisible(true);
+        dialog.setLocationRelativeTo(null); // Center it
+        dialog.setVisible(true); // Program pauses here until dialog is closed
+        
+        // 2. Refresh the table after dialog closes
+        loadTable();
     }//GEN-LAST:event_tambahBarangButtonActionPerformed
+
+    private void editBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarangButtonActionPerformed
+        // 1. Check if row selected
+        int selectedRow = tabelBarangButton.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris yang ingin diedit!");
+            return;
+        }
+
+        // 2. Get Data from Table
+        String id = tabelBarangButton.getValueAt(selectedRow, 0).toString();
+        // Assuming Column 1 is "Ada Gambar", Column 2 is Name, 3 is Stok, 4 is Harga
+        String nama = tabelBarangButton.getValueAt(selectedRow, 2).toString();
+        String stok = tabelBarangButton.getValueAt(selectedRow, 3).toString();
+        String harga = tabelBarangButton.getValueAt(selectedRow, 4).toString();
+
+        // 3. Open Dialog and Pass Data
+        DialogTambahBarang dialog = new DialogTambahBarang(new javax.swing.JFrame(), true);
+        
+        // CALL THE METHOD WE WILL CREATE IN STEP 2B
+        dialog.setEditData(id, nama, stok, harga); 
+        
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+        
+        // 4. Refresh after closing
+        loadTable();
+    }//GEN-LAST:event_editBarangButtonActionPerformed
+
+    private void hapusBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBarangButtonActionPerformed
+        // 1. Check if a row is selected
+        int selectedRow = tabelBarangButton.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris yang ingin dihapus terlebih dahulu!");
+            return;
+        }
+
+        // 2. Get the ID (Column 0)
+        String idProduk = tabelBarangButton.getValueAt(selectedRow, 0).toString();
+
+        // 3. Confirm Deletion
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this, 
+                "Apakah anda yakin ingin menghapus produk ID: " + idProduk + "?", 
+                "Konfirmasi Hapus", 
+                javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+                String sql = "DELETE FROM produk WHERE id_produk = ?";
+                java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                pst.setInt(1, Integer.parseInt(idProduk));
+                
+                pst.executeUpdate();
+                javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus");
+                
+                // 4. Refresh Table
+                loadTable();
+                
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_hapusBarangButtonActionPerformed
+
+    private void cariBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBarangButtonActionPerformed
+       String keyword = cariBarangField.getText();
+        DefaultTableModel model = (DefaultTableModel) tabelBarangButton.getModel();
+        model.setRowCount(0);
+
+        try {
+            Connection conn = Konektor.getConnection();
+            String sql = "SELECT * FROM produk WHERE nama_barang LIKE '%" + keyword + "%'";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                String id = String.valueOf(rs.getInt("id_produk"));
+                String nama = rs.getString("nama_barang");
+                String stok = String.valueOf(rs.getInt("stok_barang"));
+                String harga = String.valueOf(rs.getDouble("harga_barang"));
+                String gambarInfo = (rs.getBytes("image_barang") != null) ? "Ada" : "Tidak";
+
+                model.addRow(new Object[]{id, gambarInfo, nama, stok, harga, "Edit/Hapus"});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_cariBarangButtonActionPerformed
+    
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

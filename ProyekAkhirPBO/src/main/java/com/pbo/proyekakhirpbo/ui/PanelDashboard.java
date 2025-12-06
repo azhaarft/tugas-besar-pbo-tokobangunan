@@ -3,7 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package com.pbo.proyekakhirpbo.ui;
-
+import com.pbo.proyekakhirpbo.db.Konektor;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 /**
  *
  * @author Asus
@@ -15,8 +18,41 @@ public class PanelDashboard extends javax.swing.JPanel {
      */
     public PanelDashboard() {
         initComponents();
+        loadDashboardStats();
     }
+    
+    private void loadDashboardStats() {
+        try {
+            Connection conn = Konektor.getConnection();
 
+            // --- 1. COUNT TOTAL PRODUK ---
+            String sqlProduk = "SELECT COUNT(*) AS total FROM produk";
+            PreparedStatement pst1 = conn.prepareStatement(sqlProduk);
+            ResultSet rs1 = pst1.executeQuery();
+            if (rs1.next()) {
+                produkCount.setText(rs1.getString("total") + " Pcs");
+            }
+
+            // --- 2. COUNT PENDING TRANSACTIONS ---
+            String sqlPending = "SELECT COUNT(*) AS total FROM transaksi WHERE status = 'Pending'";
+            PreparedStatement pst2 = conn.prepareStatement(sqlPending);
+            ResultSet rs2 = pst2.executeQuery();
+            if (rs2.next()) {
+                pendingCount.setText(rs2.getString("total") + " Transaksi");
+            }
+
+            // --- 3. COUNT LUNAS TRANSACTIONS (Total Penjualan) ---
+            String sqlLunas = "SELECT COUNT(*) AS total FROM transaksi WHERE status = 'Lunas'";
+            PreparedStatement pst3 = conn.prepareStatement(sqlLunas);
+            ResultSet rs3 = pst3.executeQuery();
+            if (rs3.next()) {
+                penjualanCount.setText(rs3.getString("total") + " Terjual");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,10 +65,13 @@ public class PanelDashboard extends javax.swing.JPanel {
         panelDashboard = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        penjualanCount = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        pendingCount = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        produkCount = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         panelDashboard.setBackground(new java.awt.Color(255, 255, 255));
@@ -46,21 +85,28 @@ public class PanelDashboard extends javax.swing.JPanel {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Total Penjualan");
 
+        penjualanCount.setForeground(new java.awt.Color(255, 255, 255));
+        penjualanCount.setText("penjualan");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(60, 60, 60)
-                .addComponent(jLabel4)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(penjualanCount)
+                    .addComponent(jLabel4))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(jLabel4)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(penjualanCount)
+                .addContainerGap(118, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(0, 32, 64));
@@ -71,21 +117,31 @@ public class PanelDashboard extends javax.swing.JPanel {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Transaksi Pending");
 
+        pendingCount.setForeground(new java.awt.Color(255, 255, 255));
+        pendingCount.setText("jLabel5");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(jLabel3)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addComponent(jLabel3))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(80, 80, 80)
+                        .addComponent(pendingCount)))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel3)
-                .addContainerGap(155, Short.MAX_VALUE))
+                .addGap(59, 59, 59)
+                .addComponent(pendingCount)
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jPanel5.setBackground(new java.awt.Color(0, 32, 64));
@@ -95,21 +151,31 @@ public class PanelDashboard extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Total Produk");
 
+        produkCount.setForeground(new java.awt.Color(255, 255, 255));
+        produkCount.setText("Hasil");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(jLabel2)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(86, 86, 86)
+                        .addComponent(produkCount)))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jLabel2)
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addComponent(produkCount)
+                .addContainerGap(84, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -171,5 +237,8 @@ public class PanelDashboard extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel panelDashboard;
+    private javax.swing.JLabel pendingCount;
+    private javax.swing.JLabel penjualanCount;
+    private javax.swing.JLabel produkCount;
     // End of variables declaration//GEN-END:variables
 }

@@ -38,7 +38,7 @@ public class FrameDashboard extends javax.swing.JFrame {
         initComponents();
         setHaloNama();
         insertDummyProduct();
-        loadProduk();
+        loadProduk("");
     }
     
     
@@ -65,49 +65,65 @@ public class FrameDashboard extends javax.swing.JFrame {
         }
     }
     
-    public void loadProduk(){
+    private void loadProduk(String keyword) {
+        // 1. Clear the panel
         jPanel2.removeAll();
-        jPanel2.setLayout(new GridLayout(0, 5, 10, 10));
-        
+        // 2. Use the wider grid layout we fixed earlier
+        jPanel2.setLayout(new java.awt.GridLayout(0, 5, 10, 10)); 
+
         try {
-            Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
-            String sql = "SELECT * FROM produk";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-            
+            java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+            String sql;
+            java.sql.PreparedStatement pst;
+
+            // 3. Check if we are searching or loading all
+            if (keyword == null || keyword.isEmpty()) {
+                sql = "SELECT * FROM produk";
+                pst = conn.prepareStatement(sql);
+            } else {
+                sql = "SELECT * FROM produk WHERE nama_barang LIKE ?";
+                pst = conn.prepareStatement(sql);
+                pst.setString(1, "%" + keyword + "%"); // The '%' allows partial matches
+            }
+
+            java.sql.ResultSet rs = pst.executeQuery();
+
             while (rs.next()) {
-                // 1. GET THE ID (Crucial!)
-                int idProduk = rs.getInt("id_produk"); // Make sure your DB column is named 'id_produk'
-                
+                int idProduk = rs.getInt("id_produk");
                 String nama = rs.getString("nama_barang");
                 double harga = rs.getDouble("harga_barang");
-       
-                byte[] imgBytes = rs.getBytes("image_barang"); 
+                byte[] imgBytes = rs.getBytes("image_barang");
 
-                JButton btn = new JButton();
-                btn.setText("<html><center>" + nama + "<br>Rp " + (long)harga + "</center></html>");
+                // 4. Create the Button (Card)
+                javax.swing.JButton btn = new javax.swing.JButton();
+                btn.setText("<html><center><b>" + nama + "</b><br>Rp " + (long)harga + "</center></html>");
+                btn.setBackground(java.awt.Color.WHITE);
 
-                // ... (Icon logic remains the same) ...
+                if (imgBytes != null) {
+                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgBytes);
+                    java.awt.Image img = icon.getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
+                    btn.setIcon(new javax.swing.ImageIcon(img));
+                }
 
-                btn.setPreferredSize(new Dimension(150, 150));
+                btn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+                btn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+                btn.setPreferredSize(new java.awt.Dimension(150, 170));
 
-                // 2. THE FIX: Call addToCart when clicked
+                // 5. Add "Add to Cart" Action
                 btn.addActionListener(e -> {
-                    System.out.println("Adding to cart: " + nama + " (ID: " + idProduk + ")");
-                    addToCart(idProduk); 
+                    addToCart(idProduk);
                 });
-           
+
                 jPanel2.add(btn);
-            
             }
+
+            // 6. Refresh UI
             jPanel2.revalidate();
             jPanel2.repaint();
-        } 
-        catch (Exception e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-            
-            
     }
     
     private void addToCart(int idProduk) {
@@ -281,6 +297,11 @@ public class FrameDashboard extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(0, 32, 64));
 
         searchBtn.setText("Search");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
 
         jScrollPane1.setBackground(new java.awt.Color(0, 32, 64));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -376,6 +397,13 @@ public class FrameDashboard extends javax.swing.JFrame {
         signIn.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_logoutBtnActionPerformed
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        String keyword = searchField.getText();
+        
+        // 2. Reload the grid with the filter
+        loadProduk(keyword);
+    }//GEN-LAST:event_searchBtnActionPerformed
     
     /**
      * @param args the command line arguments

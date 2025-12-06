@@ -3,6 +3,7 @@ code/target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+*.class
 
 ### Environment Variables ###
 .env
