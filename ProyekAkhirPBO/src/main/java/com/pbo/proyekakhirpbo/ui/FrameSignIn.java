@@ -2,12 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.pbo.proyekakhirpbo;
+package com.pbo.proyekakhirpbo.ui;
 
 /**
  *
  * @author acer
  */
+
+import com.pbo.proyekakhirpbo.db.Konektor; // Change this if your package is different
+import org.mindrot.jbcrypt.BCrypt;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 public class FrameSignIn extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrameSignIn.class.getName());
@@ -36,14 +44,13 @@ public class FrameSignIn extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        emailField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        passwordField = new javax.swing.JTextField();
+        signInBtn = new javax.swing.JButton();
+        signUpBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(580, 300));
 
         jPanel1.setBackground(new java.awt.Color(0, 32, 64));
 
@@ -100,21 +107,21 @@ public class FrameSignIn extends javax.swing.JFrame {
 
         jLabel6.setText("Password");
 
-        jButton1.setBackground(new java.awt.Color(0, 32, 64));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("SIGN IN");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        signInBtn.setBackground(new java.awt.Color(0, 32, 64));
+        signInBtn.setForeground(new java.awt.Color(255, 255, 255));
+        signInBtn.setText("SIGN IN");
+        signInBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                signInBtnActionPerformed(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(0, 32, 64));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("SIGN UP");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        signUpBtn.setBackground(new java.awt.Color(0, 32, 64));
+        signUpBtn.setForeground(new java.awt.Color(255, 255, 255));
+        signUpBtn.setText("SIGN UP");
+        signUpBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                signUpBtnActionPerformed(evt);
             }
         });
 
@@ -130,11 +137,11 @@ public class FrameSignIn extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField1)
+                    .addComponent(emailField)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField2)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
+                    .addComponent(passwordField)
+                    .addComponent(signInBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(signUpBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -145,15 +152,15 @@ public class FrameSignIn extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(signInBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
+                .addComponent(signUpBtn)
                 .addContainerGap(47, Short.MAX_VALUE))
         );
 
@@ -175,13 +182,53 @@ public class FrameSignIn extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void signInBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInBtnActionPerformed
+        String email = emailField.getText();
+        String password = passwordField.getText();
+        
+        if(email.isEmpty()||password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Harap isi Email dan Password");
+            
+        }
+        
+        try{
+            Connection conn = Konektor.getConnection();
+            
+            String sql = "SELECT * FROM user WHERE email = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1,email);
+            ResultSet rs = pst.executeQuery();
+            
+            if(rs.next()){
+                String storedHash = rs.getString("password");
+                
+                if(BCrypt.checkpw(password, storedHash)){
+                    JOptionPane.showMessageDialog(this, "Login Sukses!");
+                    
+                    FrameDashboard dashboard = new FrameDashboard(email);
+                    dashboard.setVisible(true);
+                    this.dispose();
+                }
+                else{
+                    JOptionPane.showMessageDialog(this, "Password salah!");
+                }
+               
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Email tidak ditemukan!");
+            }
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Error Database" + e.getMessage());
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_signInBtnActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void signUpBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpBtnActionPerformed
+        FrameSignUp signUp = new FrameSignUp();
+        signUp.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_signUpBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -209,8 +256,7 @@ public class FrameSignIn extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JTextField emailField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -220,7 +266,8 @@ public class FrameSignIn extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField passwordField;
+    private javax.swing.JButton signInBtn;
+    private javax.swing.JButton signUpBtn;
     // End of variables declaration//GEN-END:variables
 }
