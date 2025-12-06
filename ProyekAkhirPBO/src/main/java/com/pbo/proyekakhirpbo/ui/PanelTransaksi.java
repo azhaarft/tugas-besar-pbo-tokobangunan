@@ -52,6 +52,8 @@ public class PanelTransaksi extends javax.swing.JPanel {
         cariBarangButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelTransaksi = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         panelTransaksi.setBackground(new java.awt.Color(255, 255, 255));
         panelTransaksi.setPreferredSize(new java.awt.Dimension(535, 565));
@@ -59,8 +61,6 @@ public class PanelTransaksi extends javax.swing.JPanel {
         kelolaTransaksiBarang.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
         kelolaTransaksiBarang.setForeground(new java.awt.Color(0, 32, 64));
         kelolaTransaksiBarang.setText("Kelola Transaksi Barang");
-
-        cariBarangField.setText("Cari ID Transaksi..");
 
         tambahBarangButton.setBackground(new java.awt.Color(0, 32, 64));
         tambahBarangButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -95,37 +95,50 @@ public class PanelTransaksi extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tabelTransaksi);
 
+        jLabel1.setText("240002 - 240036 - 240060");
+
+        jLabel2.setText("Cari ID Transaksi");
+
         javax.swing.GroupLayout panelTransaksiLayout = new javax.swing.GroupLayout(panelTransaksi);
         panelTransaksi.setLayout(panelTransaksiLayout);
         panelTransaksiLayout.setHorizontalGroup(
             panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTransaksiLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
                     .addGroup(panelTransaksiLayout.createSequentialGroup()
-                        .addComponent(kelolaTransaksiBarang)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTransaksiLayout.createSequentialGroup()
-                        .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTransaksiLayout.createSequentialGroup()
+                        .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelTransaksiLayout.createSequentialGroup()
                                 .addComponent(tambahBarangButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(editBarangButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(hapusBarangButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(cariBarangField)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cariBarangButton)))
-                        .addGap(12, 12, 12))))
+                                .addComponent(hapusBarangButton))
+                            .addComponent(kelolaTransaksiBarang))
+                        .addGap(18, 18, 18)
+                        .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cariBarangField)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cariBarangButton)))
+                .addGap(12, 12, 12))
         );
         panelTransaksiLayout.setVerticalGroup(
             panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTransaksiLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(kelolaTransaksiBarang)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTransaksiLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(kelolaTransaksiBarang)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTransaksiLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2)
+                        .addGap(2, 2, 2)))
                 .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tambahBarangButton)
                     .addComponent(editBarangButton)
@@ -134,7 +147,9 @@ public class PanelTransaksi extends javax.swing.JPanel {
                     .addComponent(cariBarangButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -168,6 +183,8 @@ public class PanelTransaksi extends javax.swing.JPanel {
     private javax.swing.JTextField cariBarangField;
     private javax.swing.JButton editBarangButton;
     private javax.swing.JButton hapusBarangButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel kelolaTransaksiBarang;
     private javax.swing.JPanel panelTransaksi;

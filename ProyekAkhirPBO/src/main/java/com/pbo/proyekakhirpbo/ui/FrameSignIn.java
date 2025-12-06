@@ -201,12 +201,18 @@ public class FrameSignIn extends javax.swing.JFrame {
             
             if(rs.next()){
                 String storedHash = rs.getString("password");
+                String role = rs.getString("role");
                 
                 if(BCrypt.checkpw(password, storedHash)){
                     JOptionPane.showMessageDialog(this, "Login Sukses!");
                     
-                    FrameDashboard dashboard = new FrameDashboard(email);
-                    dashboard.setVisible(true);
+                    if(role.equalsIgnoreCase("admin")){
+                        FrameAdmin admin = new FrameAdmin(email); // tampilan admin
+                        admin.setVisible(true);
+                    } else {
+                        FrameDashboard dashboard = new FrameDashboard(email); // tampilan user biasa
+                        dashboard.setVisible(true);
+                    }
                     this.dispose();
                 }
                 else{
