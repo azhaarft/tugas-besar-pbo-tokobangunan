@@ -12,8 +12,6 @@ package com.pbo.proyekakhirpbo.ui;
 import java.io.File;
 import java.io.FileInputStream;
 import javax.swing.JOptionPane;
-//buatDummy data
-
 import com.pbo.proyekakhirpbo.db.Konektor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -60,15 +58,12 @@ public class FrameDashboard extends javax.swing.JFrame {
             }
         }
         catch (Exception e) {
-            // If error, just show the email as backup
             haloLabel.setText("Hallo " + userEmail + " !");
         }
     }
     
     private void loadProduk(String keyword) {
-        // 1. Clear the panel
         jPanel2.removeAll();
-        // 2. Use the wider grid layout we fixed earlier
         jPanel2.setLayout(new java.awt.GridLayout(0, 5, 10, 10)); 
 
         try {
@@ -76,7 +71,6 @@ public class FrameDashboard extends javax.swing.JFrame {
             String sql;
             java.sql.PreparedStatement pst;
 
-            // 3. Check if we are searching or loading all
             if (keyword == null || keyword.isEmpty()) {
                 sql = "SELECT * FROM produk";
                 pst = conn.prepareStatement(sql);
@@ -94,7 +88,6 @@ public class FrameDashboard extends javax.swing.JFrame {
                 double harga = rs.getDouble("harga_barang");
                 byte[] imgBytes = rs.getBytes("image_barang");
 
-                // 4. Create the Button (Card)
                 javax.swing.JButton btn = new javax.swing.JButton();
                 btn.setText("<html><center><b>" + nama + "</b><br>Rp " + (long)harga + "</center></html>");
                 btn.setBackground(java.awt.Color.WHITE);
@@ -109,7 +102,6 @@ public class FrameDashboard extends javax.swing.JFrame {
                 btn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
                 btn.setPreferredSize(new java.awt.Dimension(150, 170));
 
-                // 5. Add "Add to Cart" Action
                 btn.addActionListener(e -> {
                     addToCart(idProduk);
                 });
@@ -117,7 +109,6 @@ public class FrameDashboard extends javax.swing.JFrame {
                 jPanel2.add(btn);
             }
 
-            // 6. Refresh UI
             jPanel2.revalidate();
             jPanel2.repaint();
 
@@ -131,7 +122,6 @@ public class FrameDashboard extends javax.swing.JFrame {
         try {
             Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
 
-            // 1. We have Email, but Keranjang needs ID_USER. Let's find it.
             String userSql = "SELECT id_user FROM user WHERE email = ?";
             PreparedStatement userPst = conn.prepareStatement(userSql);
             userPst.setString(1, userEmail);
@@ -145,7 +135,6 @@ public class FrameDashboard extends javax.swing.JFrame {
                 return;
             }
 
-            // 2. Check if item already exists in cart for this user
             String checkSql = "SELECT * FROM keranjang WHERE id_user = ? AND id_produk = ?";
             PreparedStatement checkPst = conn.prepareStatement(checkSql);
             checkPst.setInt(1, idUser);
@@ -153,10 +142,8 @@ public class FrameDashboard extends javax.swing.JFrame {
             ResultSet checkRs = checkPst.executeQuery();
 
             if (checkRs.next()) {
-                // If exists, tell the user (or you could update quantity +1 here)
                 javax.swing.JOptionPane.showMessageDialog(this, "Barang sudah ada di keranjang!");
             } else {
-                // 3. INSERT the new item
                 String insertSql = "INSERT INTO keranjang (id_user, id_produk, kuantitas) VALUES (?, ?, 1)";
                 PreparedStatement insertPst = conn.prepareStatement(insertSql);
                 insertPst.setInt(1, idUser);
@@ -165,50 +152,41 @@ public class FrameDashboard extends javax.swing.JFrame {
                 
                 javax.swing.JOptionPane.showMessageDialog(this, "Berhasil masuk keranjang!");
             }
-
         } catch (Exception e) {
             System.out.println("Error Add to Cart: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
-    //delete later
     private void insertDummyProduct() {
-    try {
-        // --- CHANGE THIS PATH TO A REAL IMAGE ON YOUR LAPTOP ---
-        // Right-click an image file -> Properties -> Security -> Copy "Object Name"
-        String filePath = "C:\\Users\\joan clarissa hal\\Downloads\\Pasfoto-removebg-preview.png"; 
+        try {
+            String filePath = "C:\\Users\\joan clarissa hal\\Downloads\\Pasfoto-removebg-preview.png"; 
         
-        File image = new File(filePath);
-        if (!image.exists()) {
-            System.out.println("Image file not found! Check the path: " + filePath);
-            return;
+            File image = new File(filePath);
+            if (!image.exists()) {
+                System.out.println("Image file not found! Check the path: " + filePath);
+                return;
+            }
+
+            FileInputStream fis = new FileInputStream(image);
+            Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+            String sql = "INSERT INTO produk (id_produk, nama_barang, deskripsi, harga_barang, stok_barang, image_barang) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement pst = conn.prepareStatement(sql);
+        
+            pst.setInt(1, 101); 
+            pst.setString(2, "Semen Test");
+            pst.setString(3, "Deskripsi Test");
+            pst.setDouble(4, 50000);
+            pst.setInt(5, 10);
+            pst.setBinaryStream(6, fis, (int) image.length());
+            pst.executeUpdate();
+        
+            javax.swing.JOptionPane.showMessageDialog(this, "Test Product Added Successfully!");
+        } catch (Exception e) {
+            System.out.println("Error inserting: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        FileInputStream fis = new FileInputStream(image);
-        Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
-        
-        // Ensure this matches your Table Columns exactly!
-        String sql = "INSERT INTO produk (id_produk, nama_barang, deskripsi, harga_barang, stok_barang, image_barang) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        
-        pst.setInt(1, 101); // Using ID 101 to avoid conflicts
-        pst.setString(2, "Semen Test");
-        pst.setString(3, "Deskripsi Test");
-        pst.setDouble(4, 50000);
-        pst.setInt(5, 10);
-        
-        // This injects the image binary data
-        pst.setBinaryStream(6, fis, (int) image.length());
-
-        pst.executeUpdate();
-        javax.swing.JOptionPane.showMessageDialog(this, "Test Product Added Successfully!");
-        
-    } catch (Exception e) {
-        System.out.println("Error inserting: " + e.getMessage());
-        e.printStackTrace();
     }
-}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -224,6 +202,7 @@ public class FrameDashboard extends javax.swing.JFrame {
         keranjangBtn = new javax.swing.JButton();
         profileBtn = new javax.swing.JButton();
         logoutBtn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         searchField = new javax.swing.JTextField();
         searchBtn = new javax.swing.JButton();
@@ -267,20 +246,27 @@ public class FrameDashboard extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Cari nama barang");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(haloLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(keranjangBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(profileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(haloLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(keranjangBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(profileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -291,7 +277,9 @@ public class FrameDashboard extends javax.swing.JFrame {
                     .addComponent(keranjangBtn)
                     .addComponent(profileBtn)
                     .addComponent(logoutBtn))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addContainerGap())
         );
 
         jPanel3.setBackground(new java.awt.Color(0, 32, 64));
@@ -317,7 +305,7 @@ public class FrameDashboard extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(barangBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(614, Short.MAX_VALUE))
+                .addContainerGap(697, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -342,11 +330,13 @@ public class FrameDashboard extends javax.swing.JFrame {
                 .addGap(49, 49, 49)
                 .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(22, 22, 22))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 818, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -367,7 +357,9 @@ public class FrameDashboard extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -437,6 +429,7 @@ public class FrameDashboard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton barangBtn;
     private javax.swing.JLabel haloLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

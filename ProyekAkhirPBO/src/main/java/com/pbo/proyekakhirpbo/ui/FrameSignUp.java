@@ -216,32 +216,27 @@ public class FrameSignUp extends javax.swing.JFrame {
         String noHp = noHpField.getText();
         String password = passwordField.getText();
         
-       //validate
-       if(username.isEmpty()||email.isEmpty()||noHp.isEmpty()||password.isEmpty()){
-           JOptionPane.showMessageDialog(this, "Harap isi semua kolom!", "peringatan", JOptionPane.WARNING_MESSAGE);
-       }
-       //hash password
-       String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-       //save ke database
-       try{
-           String sql = "INSERT INTO user(nama, email, no_telp, password, role) VALUES (?,?,?,?,?)";
+        if(username.isEmpty()||email.isEmpty()||noHp.isEmpty()||password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Harap isi semua kolom!", "peringatan", JOptionPane.WARNING_MESSAGE);
+        }
+   
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        try{
+            String sql = "INSERT INTO user(nama, email, no_telp, password, role) VALUES (?,?,?,?,?)";
+            Connection conn = Konektor.getConnection();
+            PreparedStatement pst = conn.prepareStatement(sql);
            
-           Connection conn = Konektor.getConnection();
-           PreparedStatement pst = conn.prepareStatement(sql);
-           
-           pst.setString(1, username);
-           pst.setString(2, email);
-           pst.setString(3, noHp);
-           pst.setString(4, hashedPassword);
-           pst.setString(5, "customer");
-           
-           pst.executeUpdate();
-           
+            pst.setString(1, username);
+            pst.setString(2, email);
+            pst.setString(3, noHp);
+            pst.setString(4, hashedPassword);
+            pst.setString(5, "customer");
+            pst.executeUpdate();
+            
             FrameSignIn signIn = new FrameSignIn();
             signIn.setVisible(true);
             this.dispose();
-       }
-       catch (Exception e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal: " + e.getMessage());
             e.printStackTrace(); 
         }

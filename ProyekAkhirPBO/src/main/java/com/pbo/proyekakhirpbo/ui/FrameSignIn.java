@@ -9,7 +9,7 @@ package com.pbo.proyekakhirpbo.ui;
  * @author acer
  */
 
-import com.pbo.proyekakhirpbo.db.Konektor; // Change this if your package is different
+import com.pbo.proyekakhirpbo.db.Konektor; 
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -207,10 +207,10 @@ public class FrameSignIn extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Login Sukses!");
                     
                     if(role.equalsIgnoreCase("admin")){
-                        FrameAdmin admin = new FrameAdmin(email); // tampilan admin
+                        FrameAdmin admin = new FrameAdmin(email);
                         admin.setVisible(true);
                     } else {
-                        FrameDashboard dashboard = new FrameDashboard(email); // tampilan user biasa
+                        FrameDashboard dashboard = new FrameDashboard(email); 
                         dashboard.setVisible(true);
                     }
                     this.dispose();

@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
  * @author Asus
  */
 public class DialogTambahBarang extends javax.swing.JDialog {
-    private String idProdukEdit = null; // If null, we are adding. If not null, we are editing.
+    private String idProdukEdit = null;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DialogTambahBarang.class.getName());
 
     /**
@@ -201,20 +201,17 @@ public class DialogTambahBarang extends javax.swing.JDialog {
         String hargaStr = hargaBField.getText();
         String stokStr = stokBField.getText();
         String deskripsi = deskripsiArea.getText();
-        String imagePath = gambarBField.getText(); // e.g., "C:/Users/Acer/Downloads/semen.jpg"
+        String imagePath = gambarBField.getText();
 
-        // 2. Validation (Check if empty)
         if (nama.isEmpty() || hargaStr.isEmpty() || stokStr.isEmpty() || imagePath.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Harap isi semua kolom!");
             return;
         }
 
         try {
-            // 3. Convert String to Numbers
             double harga = Double.parseDouble(hargaStr);
             int stok = Integer.parseInt(stokStr);
 
-            // 4. Handle Image File (Path -> Binary)
             File imageFile = new File(imagePath);
             if (!imageFile.exists()) {
                 JOptionPane.showMessageDialog(this, "File gambar tidak ditemukan di path tersebut!");
@@ -228,7 +225,6 @@ public class DialogTambahBarang extends javax.swing.JDialog {
             java.sql.PreparedStatement pst;
 
         if (idProdukEdit == null) {
-        // --- MODE INSERT (ADD) ---
             sql = "INSERT INTO produk (nama_barang, harga_barang, stok_barang, deskripsi, image_barang) VALUES (?, ?, ?, ?, ?)";
             pst = conn.prepareStatement(sql);
             pst.setString(1, nama);
@@ -237,9 +233,6 @@ public class DialogTambahBarang extends javax.swing.JDialog {
             pst.setString(4, deskripsi);
             pst.setBinaryStream(5, fis, (int) imageFile.length());
         } else {
-        // --- MODE UPDATE (EDIT) ---
-        // Note: We update image regardless here. 
-        // Ideally, you should check if image path is empty to keep old image.
             sql = "UPDATE produk SET nama_barang=?, harga_barang=?, stok_barang=?, deskripsi=?, image_barang=? WHERE id_produk=?";
             pst = conn.prepareStatement(sql);
             pst.setString(1, nama);
@@ -249,11 +242,10 @@ public class DialogTambahBarang extends javax.swing.JDialog {
             pst.setBinaryStream(5, fis, (int) imageFile.length());
             pst.setInt(6, Integer.parseInt(idProdukEdit)); // The WHERE clause
         }
-
+       
         pst.executeUpdate();
         javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Disimpan/Diupdate!");
         this.dispose();
-
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Harga dan Stok harus berupa angka!");
         } catch (Exception e) {
@@ -263,20 +255,16 @@ public class DialogTambahBarang extends javax.swing.JDialog {
     }//GEN-LAST:event_simpanButtonActionPerformed
     
     public void setEditData(String id, String nama, String stok, String harga) {
-        this.idProdukEdit = id; // Save the ID
+        this.idProdukEdit = id;
 
-        // Fill the fields
         namaBField.setText(nama);
         stokBField.setText(stok);
         hargaBField.setText(harga);
 
-        // Change title/button text to look like "Edit Mode"
         jLabel2.setText("FORM EDIT PRODUK");
         simpanButton.setText("Update Data");
-
-        // Note: We cannot easily pre-fill the image path or description from the table 
-        // unless you added them to the table columns (hidden or visible).
     }
+    
     /**  
      * @param args the command line arguments
      */

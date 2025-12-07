@@ -24,11 +24,9 @@ public class PanelBarang extends javax.swing.JPanel {
         initComponents();
         loadTable();
     }
+    
     private void loadTable() {
-        // 1. Get the Table Model
         DefaultTableModel model = (DefaultTableModel) tabelBarangButton.getModel();
-        
-        // 2. Clear existing rows (to prevent duplicates when reloading)
         model.setRowCount(0);
 
         try {
@@ -38,18 +36,13 @@ public class PanelBarang extends javax.swing.JPanel {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                // 3. Get Data from DB
                 String id = String.valueOf(rs.getInt("id_produk"));
                 String nama = rs.getString("nama_barang");
                 String stok = String.valueOf(rs.getInt("stok_barang"));
                 String harga = String.valueOf(rs.getDouble("harga_barang"));
                 
-                // For the "Gambar" column, we just put a placeholder text for now
-                // (Displaying real images in a table requires a custom CellRenderer)
                 String gambarInfo = (rs.getBytes("image_barang") != null) ? "Ada Gambar" : "Tidak Ada";
 
-                // 4. Add Row to Table
-                // Order must match your Table Header: "ID. Barang", "Gambar", "Nama Barang", "Stok", "Harga", "Aksi"
                 model.addRow(new Object[]{id, gambarInfo, nama, stok, harga, "Edit/Hapus"});
             }
         } catch (Exception e) {
@@ -75,6 +68,7 @@ public class PanelBarang extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelBarangButton = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(535, 565));
@@ -125,7 +119,7 @@ public class PanelBarang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID. Barang", "Gambar", "Nama Barang", "Stok", "Harga", "Aksi"
+                "ID. Barang", "Gambar", "Nama Barang", "Stok", "Harga"
             }
         ));
         tabelBarangButton.setRowHeight(30);
@@ -133,39 +127,43 @@ public class PanelBarang extends javax.swing.JPanel {
 
         jLabel1.setText("240002 - 240036 - 240060");
 
+        jLabel2.setText("Cari nama barang");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(kelolaDataBarang)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(tambahBarangButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(editBarangButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(hapusBarangButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(cariBarangField)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cariBarangButton))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(12, 12, 12))))
+                                .addComponent(hapusBarangButton))
+                            .addComponent(kelolaDataBarang))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cariBarangField)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cariBarangButton)))
+                .addGap(12, 12, 12))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(kelolaDataBarang)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(kelolaDataBarang)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tambahBarangButton)
@@ -174,8 +172,8 @@ public class PanelBarang extends javax.swing.JPanel {
                     .addComponent(cariBarangField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cariBarangButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
                 .addGap(19, 19, 19))
         );
@@ -196,53 +194,42 @@ public class PanelBarang extends javax.swing.JPanel {
 
     private void tambahBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahBarangButtonActionPerformed
         DialogTambahBarang dialog = new DialogTambahBarang(new javax.swing.JFrame(), true);
-        dialog.setLocationRelativeTo(null); // Center it
-        dialog.setVisible(true); // Program pauses here until dialog is closed
+        dialog.setLocationRelativeTo(null); 
+        dialog.setVisible(true); 
         
-        // 2. Refresh the table after dialog closes
         loadTable();
     }//GEN-LAST:event_tambahBarangButtonActionPerformed
 
     private void editBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarangButtonActionPerformed
-        // 1. Check if row selected
         int selectedRow = tabelBarangButton.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris yang ingin diedit!");
             return;
         }
 
-        // 2. Get Data from Table
         String id = tabelBarangButton.getValueAt(selectedRow, 0).toString();
-        // Assuming Column 1 is "Ada Gambar", Column 2 is Name, 3 is Stok, 4 is Harga
         String nama = tabelBarangButton.getValueAt(selectedRow, 2).toString();
         String stok = tabelBarangButton.getValueAt(selectedRow, 3).toString();
         String harga = tabelBarangButton.getValueAt(selectedRow, 4).toString();
 
-        // 3. Open Dialog and Pass Data
         DialogTambahBarang dialog = new DialogTambahBarang(new javax.swing.JFrame(), true);
         
-        // CALL THE METHOD WE WILL CREATE IN STEP 2B
         dialog.setEditData(id, nama, stok, harga); 
-        
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
         
-        // 4. Refresh after closing
         loadTable();
     }//GEN-LAST:event_editBarangButtonActionPerformed
 
     private void hapusBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBarangButtonActionPerformed
-        // 1. Check if a row is selected
         int selectedRow = tabelBarangButton.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, "Pilih baris yang ingin dihapus terlebih dahulu!");
             return;
         }
 
-        // 2. Get the ID (Column 0)
         String idProduk = tabelBarangButton.getValueAt(selectedRow, 0).toString();
 
-        // 3. Confirm Deletion
         int confirm = javax.swing.JOptionPane.showConfirmDialog(this, 
                 "Apakah anda yakin ingin menghapus produk ID: " + idProduk + "?", 
                 "Konfirmasi Hapus", 
@@ -258,9 +245,7 @@ public class PanelBarang extends javax.swing.JPanel {
                 pst.executeUpdate();
                 javax.swing.JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus");
                 
-                // 4. Refresh Table
                 loadTable();
-                
             } catch (Exception e) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
             }
@@ -300,6 +285,7 @@ public class PanelBarang extends javax.swing.JPanel {
     private javax.swing.JButton editBarangButton;
     private javax.swing.JButton hapusBarangButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel kelolaDataBarang;

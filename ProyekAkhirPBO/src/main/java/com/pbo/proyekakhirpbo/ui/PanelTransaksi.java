@@ -27,16 +27,12 @@ public class PanelTransaksi extends javax.swing.JPanel {
     }
     
     private void loadData() {
-    DefaultTableModel model = (DefaultTableModel) tabelTransaksi.getModel();
-        
-        // 1. CLEAR DUMMY DATA
+        DefaultTableModel model = (DefaultTableModel) tabelTransaksi.getModel();
         model.setRowCount(0); 
 
         try {
             Connection conn = Konektor.getConnection();
             
-            // 2. QUERY DATABASE
-            // We join 'transaksi' with 'user' to get the name (e.g. "Aulia R") instead of just ID "5"
             String sql = "SELECT t.id_transaksi, u.nama, t.created_at, t.total, t.status " +
                          "FROM transaksi t " +
                          "JOIN user u ON t.id_user = u.id_user " +
@@ -52,7 +48,6 @@ public class PanelTransaksi extends javax.swing.JPanel {
                 String total = String.valueOf((long)rs.getDouble("total"));
                 String status = rs.getString("status");
 
-                // Add to table
                 model.addRow(new Object[]{ id, user, tgl, total, status, "Detail" });
             }
         } catch (Exception e) {
@@ -71,7 +66,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
 
         panelTransaksi = new javax.swing.JPanel();
         kelolaTransaksiBarang = new javax.swing.JLabel();
-        cariBarangField = new javax.swing.JTextField();
+        cariCustomerField = new javax.swing.JTextField();
         hapusTransaksiButton = new javax.swing.JButton();
         cariBarangButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -85,6 +80,12 @@ public class PanelTransaksi extends javax.swing.JPanel {
         kelolaTransaksiBarang.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
         kelolaTransaksiBarang.setForeground(new java.awt.Color(0, 32, 64));
         kelolaTransaksiBarang.setText("Kelola Transaksi Barang");
+
+        cariCustomerField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cariCustomerFieldActionPerformed(evt);
+            }
+        });
 
         hapusTransaksiButton.setBackground(new java.awt.Color(0, 32, 64));
         hapusTransaksiButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -110,7 +111,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID. Transaksi", "User", "Tanggal", "Total", "Status", "Aksi"
+                "ID. Transaksi", "Customer", "Tanggal", "Total", "Status"
             }
         ));
         tabelTransaksi.setRowHeight(30);
@@ -123,7 +124,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
 
         jLabel1.setText("240002 - 240036 - 240060");
 
-        jLabel2.setText("Cari ID Transaksi");
+        jLabel2.setText("Cari nama customer");
 
         javax.swing.GroupLayout panelTransaksiLayout = new javax.swing.GroupLayout(panelTransaksi);
         panelTransaksi.setLayout(panelTransaksiLayout);
@@ -132,69 +133,60 @@ public class PanelTransaksi extends javax.swing.JPanel {
             .addGroup(panelTransaksiLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelTransaksiLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTransaksiLayout.createSequentialGroup()
+                    .addGroup(panelTransaksiLayout.createSequentialGroup()
                         .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(kelolaTransaksiBarang)
                             .addGroup(panelTransaksiLayout.createSequentialGroup()
-                                .addGap(181, 181, 181)
-                                .addComponent(hapusTransaksiButton))
-                            .addComponent(kelolaTransaksiBarang))
+                                .addComponent(cariCustomerField, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cariBarangButton)))
                         .addGap(18, 18, 18)
-                        .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cariBarangField)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cariBarangButton)))
+                        .addComponent(hapusTransaksiButton)))
                 .addGap(12, 12, 12))
         );
         panelTransaksiLayout.setVerticalGroup(
             panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTransaksiLayout.createSequentialGroup()
-                .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelTransaksiLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(kelolaTransaksiBarang)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTransaksiLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2)
-                        .addGap(2, 2, 2)))
+                .addGap(15, 15, 15)
+                .addComponent(kelolaTransaksiBarang)
+                .addGap(16, 16, 16)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(hapusTransaksiButton)
-                    .addComponent(cariBarangField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cariBarangButton))
+                    .addComponent(cariCustomerField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cariBarangButton)
+                    .addComponent(hapusTransaksiButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
+            .addComponent(panelTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(panelTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(panelTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void tabelTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelTransaksiMouseClicked
         if (evt.getClickCount() == 2) {
-            
             int baris = tabelTransaksi.getSelectedRow();
-
             if (baris >= 0) {
                 String idSelected = tabelTransaksi.getValueAt(baris, 0).toString(); 
-
                 DialogTransaksi dialog = new DialogTransaksi(new javax.swing.JFrame(), true, idSelected);
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
@@ -251,7 +243,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_hapusTransaksiButtonActionPerformed
 
     private void cariBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBarangButtonActionPerformed
-        String keyword = cariBarangField.getText();
+        String keyword = cariCustomerField.getText();
         
         // 2. Clear the table before showing results
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tabelTransaksi.getModel();
@@ -292,10 +284,51 @@ public class PanelTransaksi extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_cariBarangButtonActionPerformed
 
+    private void cariCustomerFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariCustomerFieldActionPerformed
+        // TODO add your handling code here:
+        String keyword = cariCustomerField.getText();
+
+    javax.swing.table.DefaultTableModel model =  
+            (javax.swing.table.DefaultTableModel) tabelTransaksi.getModel();
+    model.setRowCount(0);
+
+    try {
+        java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+
+        String sql = "SELECT t.id_transaksi, c.nama_customer, t.created_at, t.total, t.status "
+                   + "FROM transaksi t "
+                   + "JOIN customer c ON t.id_customer = c.id_customer "
+                   + "WHERE t.id_transaksi LIKE ? OR c.nama_customer LIKE ? "
+                   + "ORDER BY t.created_at DESC";
+
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, "%" + keyword + "%");
+        pst.setString(2, "%" + keyword + "%");
+
+        java.sql.ResultSet rs = pst.executeQuery();
+
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("id_transaksi"),
+                rs.getString("nama_customer"),
+                rs.getString("created_at"),
+                (long) rs.getDouble("total"),
+                rs.getString("status"),
+                "Detail"
+            });
+        }
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "Pencarian Gagal: " + e.getMessage());
+        e.printStackTrace();
+    }
+    }//GEN-LAST:event_cariCustomerFieldActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cariBarangButton;
-    private javax.swing.JTextField cariBarangField;
+    private javax.swing.JTextField cariCustomerField;
     private javax.swing.JButton hapusTransaksiButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

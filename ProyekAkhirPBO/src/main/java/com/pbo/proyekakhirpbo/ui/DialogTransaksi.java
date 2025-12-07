@@ -22,23 +22,20 @@ public class DialogTransaksi extends javax.swing.JDialog {
      */
     public DialogTransaksi(java.awt.Frame parent, boolean modal, String id) {
         super(parent, modal);
-        this.idTransaksi = id; // Save the ID
+        this.idTransaksi = id; 
         initComponents();
-        this.setSize(500, 500); // Adjust size if needed
+        this.setSize(500, 500); 
         
-        // Show ID in title or label
         detailTransaksi.setText("DETAIL TRANSAKSI ID: " + id);
-        
-        // Load the data immediately
+     
         loadDetail();
     }
     private void loadDetail() {
         DefaultTableModel model = (DefaultTableModel) tebalTDetail.getModel();
-        model.setRowCount(0); // Clear table
+        model.setRowCount(0);
 
         try {
             Connection conn = Konektor.getConnection();
-            // Join detail_transaksi with produk to get product names
             String sql = "SELECT p.nama_barang, d.harga, d.kuantitas, (d.harga * d.kuantitas) as subtotal " +
                          "FROM detail_transaksi d " +
                          "JOIN produk p ON d.id_produk = p.id_produk " +
@@ -173,7 +170,7 @@ public class DialogTransaksi extends javax.swing.JDialog {
                 "Ubah status transaksi ID " + idTransaksi + " menjadi LUNAS?", 
                 "Konfirmasi", 
                 JOptionPane.YES_NO_OPTION);
-    
+        
         if (jawab == JOptionPane.YES_OPTION) {
             try {
                 Connection conn = Konektor.getConnection();

@@ -25,30 +25,28 @@ public class PanelDashboard extends javax.swing.JPanel {
         try {
             Connection conn = Konektor.getConnection();
 
-            // --- 1. COUNT TOTAL PRODUK ---
             String sqlProduk = "SELECT COUNT(*) AS total FROM produk";
             PreparedStatement pst1 = conn.prepareStatement(sqlProduk);
             ResultSet rs1 = pst1.executeQuery();
             if (rs1.next()) {
                 produkCount.setText(rs1.getString("total") + " Pcs");
+            
             }
 
-            // --- 2. COUNT PENDING TRANSACTIONS ---
             String sqlPending = "SELECT COUNT(*) AS total FROM transaksi WHERE status = 'Pending'";
             PreparedStatement pst2 = conn.prepareStatement(sqlPending);
             ResultSet rs2 = pst2.executeQuery();
             if (rs2.next()) {
                 pendingCount.setText(rs2.getString("total") + " Transaksi");
+            
             }
 
-            // --- 3. COUNT LUNAS TRANSACTIONS (Total Penjualan) ---
             String sqlLunas = "SELECT COUNT(*) AS total FROM transaksi WHERE status = 'Lunas'";
             PreparedStatement pst3 = conn.prepareStatement(sqlLunas);
             ResultSet rs3 = pst3.executeQuery();
             if (rs3.next()) {
                 penjualanCount.setText(rs3.getString("total") + " Terjual");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

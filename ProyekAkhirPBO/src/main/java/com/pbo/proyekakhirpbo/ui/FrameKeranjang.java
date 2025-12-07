@@ -38,13 +38,12 @@ public class FrameKeranjang extends javax.swing.JFrame {
         this.userEmail = email;
         initComponents();
         
-        // Setup the UI layout for the list
         jPanel3.setLayout(new BoxLayout(jPanel3, BoxLayout.Y_AXIS));
         
-        // Find the ID, then load items
         getUserId(); 
         loadKeranjang(); 
     }
+    
     private void processCheckout() {
         if (totalBelanja <= 0) {
             javax.swing.JOptionPane.showMessageDialog(this, "Keranjang masih kosong!");
@@ -54,9 +53,8 @@ public class FrameKeranjang extends javax.swing.JFrame {
         java.sql.Connection conn = null;
         try {
             conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
-            conn.setAutoCommit(false); // Start Transaction
+            conn.setAutoCommit(false); 
 
-            // --- 1. INSERT INTO TRANSAKSI (Fixed Status) ---
             String sqlTrans = "INSERT INTO transaksi (id_user, total, status) VALUES (?, ?, 'Pending')";
             
             java.sql.PreparedStatement pstTrans = conn.prepareStatement(sqlTrans, java.sql.Statement.RETURN_GENERATED_KEYS);
@@ -64,14 +62,12 @@ public class FrameKeranjang extends javax.swing.JFrame {
             pstTrans.setDouble(2, totalBelanja);
             pstTrans.executeUpdate();
 
-            // Get the new Transaction ID
             java.sql.ResultSet rsID = pstTrans.getGeneratedKeys();
             int idTransaksiBaru = 0;
             if (rsID.next()) {
                 idTransaksiBaru = rsID.getInt(1);
             }
 
-            // --- 2. MOVE ITEMS TO DETAIL_TRANSAKSI ---
             String sqlGetCart = "SELECT k.id_produk, k.kuantitas, p.harga_barang " + 
                                 "FROM keranjang k JOIN produk p ON k.id_produk = p.id_produk " + 
                                 "WHERE k.id_user = ?";
@@ -94,17 +90,15 @@ public class FrameKeranjang extends javax.swing.JFrame {
                 pstDetail.executeUpdate();
             }
 
-            // --- 3. CLEAR CART ---
             String sqlClear = "DELETE FROM keranjang WHERE id_user = ?";
             java.sql.PreparedStatement pstClear = conn.prepareStatement(sqlClear);
             pstClear.setInt(1, userID);
             pstClear.executeUpdate();
 
-            conn.commit(); // Save changes
+            conn.commit(); 
             javax.swing.JOptionPane.showMessageDialog(this, "Checkout Berhasil! Status: Pending");
             
-            loadKeranjang(); // UI should now be empty
-
+            loadKeranjang(); 
         } catch (Exception e) {
             try { if (conn != null) conn.rollback(); } catch (Exception ex) {}
             e.printStackTrace();
@@ -125,10 +119,10 @@ public class FrameKeranjang extends javax.swing.JFrame {
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
                 this.userID = rs.getInt("id_user");
-                System.out.println("DEBUG: Found User ID = " + this.userID); // <--- ADD THIS
+                System.out.println("DEBUG: Found User ID = " + this.userID); 
                 jLabel1.setText("Keranjang " + rs.getString("nama"));
             } else {
-                System.out.println("DEBUG: User NOT found for email: " + userEmail); // <--- ADD THIS
+                System.out.println("DEBUG: User NOT found for email: " + userEmail);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,102 +130,85 @@ public class FrameKeranjang extends javax.swing.JFrame {
     }
     
     private void loadKeranjang() {
-        // 1. Clear existing items
         jPanel3.removeAll();
-        totalBelanja = 0; // Reset total price
+        totalBelanja = 0;
 
         try {
             Connection conn = Konektor.getConnection();
             
-            // JOIN Query: Get Product Info for items in this user's cart
-            // Note: Using 'kuantitas' and 'id_user' based on your table image
             String sql = "SELECT k.id_keranjang, k.kuantitas, p.nama_barang, p.harga_barang " +
                          "FROM keranjang k " +
                          "JOIN produk p ON k.id_produk = p.id_produk " +
                          "WHERE k.id_user = ?";
                          
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setInt(1, userID); // Use the ID we found earlier
+            pst.setInt(1, userID);
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
-                // Get Data from DB
                 int idKeranjang = rs.getInt("id_keranjang");
                 String nama = rs.getString("nama_barang");
                 double harga = rs.getDouble("harga_barang");
                 int qty = rs.getInt("kuantitas");
                 
-                // Calculate Subtotal for this item
                 totalBelanja += (harga * qty);
 
-                // --- RECREATE YOUR UI DESIGN (jPanel5) IN CODE ---
                 JPanel rowPanel = new JPanel();
-                rowPanel.setPreferredSize(new Dimension(1000, 100)); // Match your design size
+                rowPanel.setPreferredSize(new Dimension(1000, 100));
                 rowPanel.setMaximumSize(new Dimension(1000, 100)); 
-                rowPanel.setBackground(new Color(240, 240, 240)); // Light gray background
-                rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY)); // Bottom line
-                rowPanel.setLayout(null); // Absolute layout to match your design
+                rowPanel.setBackground(new Color(240, 240, 240));
+                rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+                rowPanel.setLayout(null); 
 
-                // 1. Checkbox
                 JCheckBox chk = new JCheckBox();
                 chk.setBounds(10, 35, 20, 20);
                 rowPanel.add(chk);
 
-                // 2. Name Label (jLabel8 in your design)
                 JLabel lblName = new JLabel(nama);
                 lblName.setFont(new Font("Segoe UI", Font.BOLD, 14));
                 lblName.setBounds(40, 20, 200, 20);
                 rowPanel.add(lblName);
 
-                // 3. Price Label (jLabel7)
                 JLabel lblPrice = new JLabel("Rp " + (long)harga);
                 lblPrice.setBounds(40, 45, 100, 20);
                 rowPanel.add(lblPrice);
 
-                // 4. Minus Button (jButton6)
                 JButton btnMin = new JButton("-");
                 btnMin.setBounds(300, 30, 40, 30);
                 btnMin.addActionListener(e -> updateQty(idKeranjang, qty - 1));
                 rowPanel.add(btnMin);
 
-                // 5. Qty Field (jTextField2)
                 JTextField txtQty = new JTextField(String.valueOf(qty));
                 txtQty.setHorizontalAlignment(JTextField.CENTER);
                 txtQty.setEditable(false);
                 txtQty.setBounds(345, 30, 40, 30);
                 rowPanel.add(txtQty);
 
-                // 6. Plus Button (jButton5)
                 JButton btnPlus = new JButton("+");
                 btnPlus.setBounds(390, 30, 40, 30);
                 btnPlus.addActionListener(e -> updateQty(idKeranjang, qty + 1));
                 rowPanel.add(btnPlus);
 
-                // 7. Delete Button (jButton7)
                 JButton btnDel = new JButton("Delete");
-                btnDel.setBackground(Color.RED); // Optional styling
+                btnDel.setBackground(Color.RED); 
                 btnDel.setForeground(Color.WHITE);
                 btnDel.setBounds(440, 30, 70, 30);
                 btnDel.addActionListener(e -> deleteItem(idKeranjang));
                 rowPanel.add(btnDel);
                 
-                
-                // Add this row to the main list
                 jPanel3.add(rowPanel);
-                
-                // Add a small spacer gap
+
                 jPanel3.add(javax.swing.Box.createRigidArea(new Dimension(0, 10)));
             }
             
             totalLabel.setText("Total : Rp " + totalBelanja);
             jPanel3.revalidate();
             jPanel3.repaint();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    // Increase or Decrease Quantity
+  
     private void updateQty(int idKeranjang, int newQty) {
         if (newQty < 1) return; // Minimum 1
         
@@ -243,13 +220,12 @@ public class FrameKeranjang extends javax.swing.JFrame {
             pst.setInt(2, idKeranjang);
             pst.executeUpdate();
             
-            loadKeranjang(); // Reload UI to show new price/qty
+            loadKeranjang();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Delete Item
     private void deleteItem(int idKeranjang) {
         int confirm = JOptionPane.showConfirmDialog(this, "Hapus barang ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
@@ -260,7 +236,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
                 pst.setInt(1, idKeranjang);
                 pst.executeUpdate();
                 
-                loadKeranjang(); // Reload UI
+                loadKeranjang();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -281,6 +257,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
         logoutBtn = new javax.swing.JButton();
         profileBtn = new javax.swing.JButton();
         dashboardBtn = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel3 = new javax.swing.JPanel();
@@ -288,9 +265,6 @@ public class FrameKeranjang extends javax.swing.JFrame {
         searchBtn = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        namaBarangLbl = new javax.swing.JLabel();
-        jumlahBarangLbl = new javax.swing.JLabel();
-        hargaBaranglbl = new javax.swing.JLabel();
         totalLabel = new javax.swing.JLabel();
         checkoutBtn = new javax.swing.JButton();
 
@@ -329,20 +303,27 @@ public class FrameKeranjang extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Cari nama barang");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(dashboardBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(profileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(dashboardBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(profileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,7 +338,9 @@ public class FrameKeranjang extends javax.swing.JFrame {
                             .addComponent(logoutBtn)
                             .addComponent(profileBtn)
                             .addComponent(dashboardBtn))))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addContainerGap())
         );
 
         jPanel2.setBackground(new java.awt.Color(0, 32, 64));
@@ -421,12 +404,6 @@ public class FrameKeranjang extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
-        namaBarangLbl.setText("Nama Barang :");
-
-        jumlahBarangLbl.setText("Jumlah Barang :");
-
-        hargaBaranglbl.setText("Harga Barang :");
-
         totalLabel.setText("Total :");
 
         checkoutBtn.setBackground(new java.awt.Color(0, 32, 64));
@@ -442,29 +419,17 @@ public class FrameKeranjang extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(namaBarangLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jumlahBarangLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                    .addComponent(hargaBaranglbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(totalLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(checkoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(namaBarangLbl)
-                .addGap(18, 18, 18)
-                .addComponent(jumlahBarangLbl)
-                .addGap(18, 18, 18)
-                .addComponent(hargaBaranglbl)
-                .addGap(41, 41, 41)
+                .addGap(25, 25, 25)
                 .addComponent(totalLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(checkoutBtn)
@@ -550,8 +515,8 @@ public class FrameKeranjang extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton checkoutBtn;
     private javax.swing.JButton dashboardBtn;
-    private javax.swing.JLabel hargaBaranglbl;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -559,9 +524,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel jumlahBarangLbl;
     private javax.swing.JButton logoutBtn;
-    private javax.swing.JLabel namaBarangLbl;
     private javax.swing.JButton profileBtn;
     private javax.swing.JButton searchBtn;
     private javax.swing.JLabel totalLabel;
