@@ -454,7 +454,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
 
         checkoutBtn.setBackground(new java.awt.Color(0, 32, 64));
         checkoutBtn.setForeground(new java.awt.Color(255, 255, 255));
-        checkoutBtn.setText("Chectout");
+        checkoutBtn.setText("Checkout");
         checkoutBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 checkoutBtnActionPerformed(evt);
