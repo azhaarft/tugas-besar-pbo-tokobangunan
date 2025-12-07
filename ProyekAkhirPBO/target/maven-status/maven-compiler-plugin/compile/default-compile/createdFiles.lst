@@ -1,6 +1,7 @@
 com\pbo\proyekakhirpbo\ui\FrameDashboard.class
 com\pbo\proyekakhirpbo\db\Konektor.class
 com\pbo\proyekakhirpbo\ui\FrameDashboard$2.class
+com\pbo\proyekakhirpbo\ui\PanelTransaksi$4.class
 com\pbo\proyekakhirpbo\ui\FrameProfile.class
 com\pbo\proyekakhirpbo\ui\PanelDashboard.class
 com\pbo\proyekakhirpbo\ui\DialogTransaksi$2$1.class
@@ -33,6 +34,7 @@ com\pbo\proyekakhirpbo\ui\PanelTransaksi$3.class
 com\pbo\proyekakhirpbo\ui\FrameAdmin.class
 com\pbo\proyekakhirpbo\ui\FrameDashboard$4.class
 com\pbo\proyekakhirpbo\ui\FrameSignUp$1.class
+com\pbo\proyekakhirpbo\ui\FrameKeranjang$CartItem.class
 com\pbo\proyekakhirpbo\ui\FrameSignIn.class
 com\pbo\proyekakhirpbo\model\user.class
 com\pbo\proyekakhirpbo\ui\FrameProfile$4.class

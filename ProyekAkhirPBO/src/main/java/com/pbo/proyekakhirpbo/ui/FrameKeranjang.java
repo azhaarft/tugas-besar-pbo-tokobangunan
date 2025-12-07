@@ -13,19 +13,21 @@ import java.sql.ResultSet;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JCheckBox;
 /**
  *
  * @author acer
  */
 public class FrameKeranjang extends javax.swing.JFrame {
     
-    
+    private List<CartItem> cartList = new ArrayList<>();
     private String userEmail; 
     private int userID; 
     private long totalBelanja = 0;
@@ -44,65 +46,85 @@ public class FrameKeranjang extends javax.swing.JFrame {
         loadKeranjang(); 
     }
     
+    private class CartItem {
+        int idKeranjang;
+        int idProduk;
+        double harga;
+        int qty;
+        JCheckBox checkBox;
+
+        public CartItem(int idK, int idP, double h, int q, JCheckBox cb) {
+            this.idKeranjang = idK;
+            this.idProduk = idP;
+            this.harga = h;
+            this.qty = q;
+            this.checkBox = cb;
+        }
+        
+        public double getSubtotal() {
+            return harga * qty;
+        }
+    }
+    
     private void processCheckout() {
-        if (totalBelanja <= 0) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Keranjang masih kosong!");
+        List<CartItem> selectedItems = new ArrayList<>();
+        long checkoutTotal = 0;
+
+        for (CartItem item : cartList) {
+            if (item.checkBox.isSelected()) {
+                selectedItems.add(item);
+                checkoutTotal += item.getSubtotal();
+            }
+        }
+
+        if (selectedItems.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tidak ada barang yang dipilih!");
             return;
         }
 
-        java.sql.Connection conn = null;
+        Connection conn = null;
         try {
-            conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
+            conn = Konektor.getConnection();
             conn.setAutoCommit(false); 
 
             String sqlTrans = "INSERT INTO transaksi (id_user, total, status) VALUES (?, ?, 'Pending')";
-            
-            java.sql.PreparedStatement pstTrans = conn.prepareStatement(sqlTrans, java.sql.Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstTrans = conn.prepareStatement(sqlTrans, Statement.RETURN_GENERATED_KEYS);
             pstTrans.setInt(1, userID);
-            pstTrans.setDouble(2, totalBelanja);
+            pstTrans.setDouble(2, checkoutTotal);
             pstTrans.executeUpdate();
-
-            java.sql.ResultSet rsID = pstTrans.getGeneratedKeys();
+            
+            ResultSet rsID = pstTrans.getGeneratedKeys();
             int idTransaksiBaru = 0;
             if (rsID.next()) {
                 idTransaksiBaru = rsID.getInt(1);
             }
 
-            String sqlGetCart = "SELECT k.id_produk, k.kuantitas, p.harga_barang " + 
-                                "FROM keranjang k JOIN produk p ON k.id_produk = p.id_produk " + 
-                                "WHERE k.id_user = ?";
-            java.sql.PreparedStatement pstGet = conn.prepareStatement(sqlGetCart);
-            pstGet.setInt(1, userID);
-            java.sql.ResultSet rsCart = pstGet.executeQuery();
-
             String sqlDetail = "INSERT INTO detail_transaksi (id_transaksi, id_produk, kuantitas, harga) VALUES (?, ?, ?, ?)";
-            java.sql.PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
+            PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
 
-            while (rsCart.next()) {
-                int idProd = rsCart.getInt("id_produk");
-                int qty = rsCart.getInt("kuantitas");
-                double harga = rsCart.getDouble("harga_barang");
+            String sqlDeleteCart = "DELETE FROM keranjang WHERE id_keranjang = ?";
+            PreparedStatement pstDelete = conn.prepareStatement(sqlDeleteCart);
 
+            for (CartItem item : selectedItems) {
                 pstDetail.setInt(1, idTransaksiBaru);
-                pstDetail.setInt(2, idProd);
-                pstDetail.setInt(3, qty);
-                pstDetail.setDouble(4, harga);
+                pstDetail.setInt(2, item.idProduk);
+                pstDetail.setInt(3, item.qty);
+                pstDetail.setDouble(4, item.harga);
                 pstDetail.executeUpdate();
+                
+                pstDelete.setInt(1, item.idKeranjang);
+                pstDelete.executeUpdate();
             }
 
-            String sqlClear = "DELETE FROM keranjang WHERE id_user = ?";
-            java.sql.PreparedStatement pstClear = conn.prepareStatement(sqlClear);
-            pstClear.setInt(1, userID);
-            pstClear.executeUpdate();
-
             conn.commit(); 
-            javax.swing.JOptionPane.showMessageDialog(this, "Checkout Berhasil! Status: Pending");
+            JOptionPane.showMessageDialog(this, "Checkout Berhasil! ID: " + idTransaksiBaru);
             
             loadKeranjang(); 
+
         } catch (Exception e) {
             try { if (conn != null) conn.rollback(); } catch (Exception ex) {}
             e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this, "Checkout Gagal: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Checkout Gagal: " + e.getMessage());
         }
     }
     
@@ -136,7 +158,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
         try {
             Connection conn = Konektor.getConnection();
             
-            String sql = "SELECT k.id_keranjang, k.kuantitas, p.nama_barang, p.harga_barang " +
+            String sql = "SELECT k.id_keranjang, k.id_produk, k.kuantitas, p.nama_barang, p.harga_barang " +
                          "FROM keranjang k " +
                          "JOIN produk p ON k.id_produk = p.id_produk " +
                          "WHERE k.id_user = ?";
@@ -147,66 +169,90 @@ public class FrameKeranjang extends javax.swing.JFrame {
 
             while (rs.next()) {
                 int idKeranjang = rs.getInt("id_keranjang");
+                int idProduk = rs.getInt("id_produk"); // We need this now
                 String nama = rs.getString("nama_barang");
                 double harga = rs.getDouble("harga_barang");
                 int qty = rs.getInt("kuantitas");
                 
-                totalBelanja += (harga * qty);
-
+                // --- GUI CREATION ---
                 JPanel rowPanel = new JPanel();
-                rowPanel.setPreferredSize(new Dimension(1000, 100));
+                rowPanel.setPreferredSize(new Dimension(500, 100)); // Adjusted width
                 rowPanel.setMaximumSize(new Dimension(1000, 100)); 
                 rowPanel.setBackground(new Color(240, 240, 240));
                 rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
                 rowPanel.setLayout(null); 
 
+                // 1. Checkbox
                 JCheckBox chk = new JCheckBox();
                 chk.setBounds(10, 35, 20, 20);
+                chk.setSelected(true); // Default to checked
+                
+                // ACTION: Recalculate total when clicked
+                chk.addActionListener(e -> calculateTotalDisplay());
+                
                 rowPanel.add(chk);
 
+                // --- SAVE DATA TO LIST ---
+                cartList.add(new CartItem(idKeranjang, idProduk, harga, qty, chk));
+
+                // 2. Name
                 JLabel lblName = new JLabel(nama);
                 lblName.setFont(new Font("Segoe UI", Font.BOLD, 14));
                 lblName.setBounds(40, 20, 200, 20);
                 rowPanel.add(lblName);
 
+                // 3. Price
                 JLabel lblPrice = new JLabel("Rp " + (long)harga);
                 lblPrice.setBounds(40, 45, 100, 20);
                 rowPanel.add(lblPrice);
 
+                // 4. Minus
                 JButton btnMin = new JButton("-");
                 btnMin.setBounds(300, 30, 40, 30);
                 btnMin.addActionListener(e -> updateQty(idKeranjang, qty - 1));
                 rowPanel.add(btnMin);
 
+                // 5. Qty
                 JTextField txtQty = new JTextField(String.valueOf(qty));
                 txtQty.setHorizontalAlignment(JTextField.CENTER);
                 txtQty.setEditable(false);
                 txtQty.setBounds(345, 30, 40, 30);
                 rowPanel.add(txtQty);
 
+                // 6. Plus
                 JButton btnPlus = new JButton("+");
                 btnPlus.setBounds(390, 30, 40, 30);
                 btnPlus.addActionListener(e -> updateQty(idKeranjang, qty + 1));
                 rowPanel.add(btnPlus);
 
+                // 7. Delete
                 JButton btnDel = new JButton("Delete");
                 btnDel.setBackground(Color.RED); 
                 btnDel.setForeground(Color.WHITE);
                 btnDel.setBounds(440, 30, 70, 30);
                 btnDel.addActionListener(e -> deleteItem(idKeranjang));
                 rowPanel.add(btnDel);
-                
-                jPanel3.add(rowPanel);
 
+                jPanel3.add(rowPanel);
                 jPanel3.add(javax.swing.Box.createRigidArea(new Dimension(0, 10)));
             }
-            
-            totalLabel.setText("Total : Rp " + totalBelanja);
+            calculateTotalDisplay();
+
             jPanel3.revalidate();
             jPanel3.repaint();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private void calculateTotalDisplay() {
+        long currentTotal = 0;
+        for (CartItem item : cartList) {
+            if (item.checkBox.isSelected()) {
+                currentTotal += item.getSubtotal();
+            }
+        }
+        totalLabel.setText("Total : Rp " + currentTotal);
     }
   
     private void updateQty(int idKeranjang, int newQty) {
