@@ -254,12 +254,13 @@ public class DialogTambahBarang extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_simpanButtonActionPerformed
     
-    public void setEditData(String id, String nama, String stok, String harga) {
+    public void setEditData(String id, String nama, String stok, String harga, String deskripsi) {
         this.idProdukEdit = id;
 
         namaBField.setText(nama);
         stokBField.setText(stok);
         hargaBField.setText(harga);
+        deskripsiArea.setText(deskripsi);
 
         jLabel2.setText("FORM EDIT PRODUK");
         simpanButton.setText("Update Data");

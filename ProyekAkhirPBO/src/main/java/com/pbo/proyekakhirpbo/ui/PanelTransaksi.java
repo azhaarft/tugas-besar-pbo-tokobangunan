@@ -44,7 +44,7 @@ public class PanelTransaksi extends javax.swing.JPanel {
             while (rs.next()) {
                 String id = String.valueOf(rs.getInt("id_transaksi"));
                 String user = rs.getString("nama");
-                String tgl = rs.getString("created_at"); // Matches your DB column 'created_at'
+                String tgl = rs.getString("created_at"); 
                 String total = String.valueOf((long)rs.getDouble("total"));
                 String status = rs.getString("status");
 
@@ -191,7 +191,6 @@ public class PanelTransaksi extends javax.swing.JPanel {
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
                 
-                // Refresh table after dialog closes (in case status changed to Lunas)
                 loadData();
             }
         }
@@ -204,10 +203,8 @@ public class PanelTransaksi extends javax.swing.JPanel {
             return;
         }
 
-        // 2. Get the ID (Column 0 is ID Transaksi)
         String idTrans = tabelTransaksi.getValueAt(selectedRow, 0).toString();
 
-        // 3. Confirm Deletion
         int confirm = javax.swing.JOptionPane.showConfirmDialog(this, 
                 "Hapus riwayat transaksi ID: " + idTrans + "?\nData tidak bisa dikembalikan.", 
                 "Konfirmasi Hapus", 
@@ -217,14 +214,11 @@ public class PanelTransaksi extends javax.swing.JPanel {
             try {
                 java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
                 
-                // --- STEP A: Delete the Details first (Safety Step) ---
-                // Even if you have CASCADE on, doing this explicitly is safer in Java code
                 String sqlDetail = "DELETE FROM detail_transaksi WHERE id_transaksi = ?";
                 java.sql.PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
                 pstDetail.setInt(1, Integer.parseInt(idTrans));
                 pstDetail.executeUpdate();
 
-                // --- STEP B: Delete the Header ---
                 String sql = "DELETE FROM transaksi WHERE id_transaksi = ?";
                 java.sql.PreparedStatement pst = conn.prepareStatement(sql);
                 pst.setInt(1, Integer.parseInt(idTrans));
@@ -232,7 +226,6 @@ public class PanelTransaksi extends javax.swing.JPanel {
                 
                 javax.swing.JOptionPane.showMessageDialog(this, "Data Transaksi Berhasil Dihapus");
                 
-                // 4. Refresh the Table
                 loadData(); 
                 
             } catch (Exception e) {
@@ -245,15 +238,12 @@ public class PanelTransaksi extends javax.swing.JPanel {
     private void cariBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBarangButtonActionPerformed
         String keyword = cariCustomerField.getText();
         
-        // 2. Clear the table before showing results
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tabelTransaksi.getModel();
         model.setRowCount(0);
 
         try {
             java.sql.Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
             
-            // 3. Search Query
-            // We search in 'transaksi.id_transaksi' OR 'user.nama'
             String sql = "SELECT t.id_transaksi, u.nama, t.created_at, t.total, t.status " +
                          "FROM transaksi t " +
                          "JOIN user u ON t.id_user = u.id_user " +
@@ -261,17 +251,15 @@ public class PanelTransaksi extends javax.swing.JPanel {
                          "ORDER BY t.created_at DESC";
             
             java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, "%" + keyword + "%"); // % allows partial match
+            pst.setString(1, "%" + keyword + "%"); 
             pst.setString(2, "%" + keyword + "%");
             
             java.sql.ResultSet rs = pst.executeQuery();
 
-            // 4. Loop through results and add to table
             while (rs.next()) {
                 String id = String.valueOf(rs.getInt("id_transaksi"));
                 String user = rs.getString("nama");
                 String tgl = rs.getString("created_at"); 
-                // Format price to remove decimals (e.g. 50000.00 -> 50000)
                 String total = String.valueOf((long)rs.getDouble("total")); 
                 String status = rs.getString("status");
 
@@ -285,7 +273,6 @@ public class PanelTransaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_cariBarangButtonActionPerformed
 
     private void cariCustomerFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariCustomerFieldActionPerformed
-        // TODO add your handling code here:
         String keyword = cariCustomerField.getText();
 
     javax.swing.table.DefaultTableModel model =  

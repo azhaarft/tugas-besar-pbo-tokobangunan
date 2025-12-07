@@ -3,6 +3,8 @@
  */
 
 package com.pbo.proyekakhirpbo.main;
+import com.pbo.proyekakhirpbo.ui.FrameSignIn; 
+
 
 /**
  *
@@ -11,6 +13,10 @@ package com.pbo.proyekakhirpbo.main;
 public class ProyekAkhirPBO {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new FrameSignIn().setVisible(true);
+            }
+        });
     }
 }

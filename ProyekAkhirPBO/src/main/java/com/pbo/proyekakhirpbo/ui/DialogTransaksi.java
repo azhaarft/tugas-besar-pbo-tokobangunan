@@ -181,7 +181,7 @@ public class DialogTransaksi extends javax.swing.JDialog {
                 int rows = pst.executeUpdate();
                 if (rows > 0) {
                     JOptionPane.showMessageDialog(this, "Status Berhasil Diupdate!");
-                    this.dispose(); // Close dialog
+                    this.dispose(); 
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Error update: " + e.getMessage());

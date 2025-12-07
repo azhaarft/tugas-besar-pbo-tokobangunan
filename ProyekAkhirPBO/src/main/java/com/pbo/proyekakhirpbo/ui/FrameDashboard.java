@@ -35,13 +35,67 @@ public class FrameDashboard extends javax.swing.JFrame {
         this.userEmail = email;
         initComponents();
         setHaloNama();
-        insertDummyProduct();
         loadProduk("");
     }
     
     
     public FrameDashboard() {
         initComponents();
+    }
+    
+    private void showProductDetail(int idProduk, String nama, double harga, String deskripsi, byte[] imgBytes) {
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        panel.setLayout(new java.awt.BorderLayout(10, 10));
+        panel.setPreferredSize(new java.awt.Dimension(300, 400));
+
+        
+        javax.swing.JLabel lblImage = new javax.swing.JLabel();
+        lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        if (imgBytes != null) {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgBytes);
+            java.awt.Image img = icon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH);
+            lblImage.setIcon(new javax.swing.ImageIcon(img));
+        } else {
+            lblImage.setText("No Image");
+        }
+        panel.add(lblImage, java.awt.BorderLayout.NORTH);
+        javax.swing.JPanel infoPanel = new javax.swing.JPanel();
+        infoPanel.setLayout(new javax.swing.BoxLayout(infoPanel, javax.swing.BoxLayout.Y_AXIS));
+        
+        javax.swing.JLabel lblNama = new javax.swing.JLabel(nama);
+        lblNama.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18));
+        lblNama.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        
+        javax.swing.JLabel lblHarga = new javax.swing.JLabel("Rp " + (long)harga);
+        lblHarga.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        lblHarga.setForeground(java.awt.Color.GREEN);
+        lblHarga.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        
+        javax.swing.JTextArea txtDesc = new javax.swing.JTextArea(deskripsi);
+        txtDesc.setWrapStyleWord(true);
+        txtDesc.setLineWrap(true);
+        txtDesc.setEditable(false);
+        txtDesc.setBackground(panel.getBackground());
+        txtDesc.setMargin(new java.awt.Insets(10, 10, 10, 10));
+        
+        infoPanel.add(lblNama);
+        infoPanel.add(lblHarga);
+        infoPanel.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10))); 
+        infoPanel.add(new javax.swing.JScrollPane(txtDesc)); 
+
+        panel.add(infoPanel, java.awt.BorderLayout.CENTER);
+
+        Object[] options = {"Add to Cart", "Cancel"};
+        int result = javax.swing.JOptionPane.showOptionDialog(
+            this, panel, "Detail Produk",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.PLAIN_MESSAGE,
+            null, options, options[0]
+        );
+
+        if (result == javax.swing.JOptionPane.YES_OPTION) {
+            addToCart(idProduk);
+        }
     }
 
     public void setHaloNama(){
@@ -72,12 +126,12 @@ public class FrameDashboard extends javax.swing.JFrame {
             java.sql.PreparedStatement pst;
 
             if (keyword == null || keyword.isEmpty()) {
-                sql = "SELECT * FROM produk";
+                sql = "SELECT * FROM produk"; 
                 pst = conn.prepareStatement(sql);
             } else {
                 sql = "SELECT * FROM produk WHERE nama_barang LIKE ?";
                 pst = conn.prepareStatement(sql);
-                pst.setString(1, "%" + keyword + "%"); // The '%' allows partial matches
+                pst.setString(1, "%" + keyword + "%"); 
             }
 
             java.sql.ResultSet rs = pst.executeQuery();
@@ -86,24 +140,22 @@ public class FrameDashboard extends javax.swing.JFrame {
                 int idProduk = rs.getInt("id_produk");
                 String nama = rs.getString("nama_barang");
                 double harga = rs.getDouble("harga_barang");
+                String deskripsi = rs.getString("deskripsi");
                 byte[] imgBytes = rs.getBytes("image_barang");
 
                 javax.swing.JButton btn = new javax.swing.JButton();
                 btn.setText("<html><center><b>" + nama + "</b><br>Rp " + (long)harga + "</center></html>");
-                btn.setBackground(java.awt.Color.WHITE);
-
                 if (imgBytes != null) {
                     javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgBytes);
                     java.awt.Image img = icon.getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
                     btn.setIcon(new javax.swing.ImageIcon(img));
                 }
-
                 btn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
                 btn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
                 btn.setPreferredSize(new java.awt.Dimension(150, 170));
 
                 btn.addActionListener(e -> {
-                    addToCart(idProduk);
+                    showProductDetail(idProduk, nama, harga, deskripsi, imgBytes);
                 });
 
                 jPanel2.add(btn);
@@ -154,36 +206,6 @@ public class FrameDashboard extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             System.out.println("Error Add to Cart: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    private void insertDummyProduct() {
-        try {
-            String filePath = "C:\\Users\\joan clarissa hal\\Downloads\\Pasfoto-removebg-preview.png"; 
-        
-            File image = new File(filePath);
-            if (!image.exists()) {
-                System.out.println("Image file not found! Check the path: " + filePath);
-                return;
-            }
-
-            FileInputStream fis = new FileInputStream(image);
-            Connection conn = com.pbo.proyekakhirpbo.db.Konektor.getConnection();
-            String sql = "INSERT INTO produk (id_produk, nama_barang, deskripsi, harga_barang, stok_barang, image_barang) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement pst = conn.prepareStatement(sql);
-        
-            pst.setInt(1, 101); 
-            pst.setString(2, "Semen Test");
-            pst.setString(3, "Deskripsi Test");
-            pst.setDouble(4, 50000);
-            pst.setInt(5, 10);
-            pst.setBinaryStream(6, fis, (int) image.length());
-            pst.executeUpdate();
-        
-            javax.swing.JOptionPane.showMessageDialog(this, "Test Product Added Successfully!");
-        } catch (Exception e) {
-            System.out.println("Error inserting: " + e.getMessage());
             e.printStackTrace();
         }
     }

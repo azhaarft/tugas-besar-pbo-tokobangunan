@@ -174,58 +174,48 @@ public class FrameKeranjang extends javax.swing.JFrame {
                 double harga = rs.getDouble("harga_barang");
                 int qty = rs.getInt("kuantitas");
                 
-                // --- GUI CREATION ---
                 JPanel rowPanel = new JPanel();
-                rowPanel.setPreferredSize(new Dimension(500, 100)); // Adjusted width
+                rowPanel.setPreferredSize(new Dimension(600, 100)); 
                 rowPanel.setMaximumSize(new Dimension(1000, 100)); 
                 rowPanel.setBackground(new Color(240, 240, 240));
                 rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
                 rowPanel.setLayout(null); 
 
-                // 1. Checkbox
                 JCheckBox chk = new JCheckBox();
                 chk.setBounds(10, 35, 20, 20);
-                chk.setSelected(true); // Default to checked
+                chk.setSelected(true);
                 
-                // ACTION: Recalculate total when clicked
                 chk.addActionListener(e -> calculateTotalDisplay());
                 
                 rowPanel.add(chk);
 
-                // --- SAVE DATA TO LIST ---
                 cartList.add(new CartItem(idKeranjang, idProduk, harga, qty, chk));
 
-                // 2. Name
                 JLabel lblName = new JLabel(nama);
                 lblName.setFont(new Font("Segoe UI", Font.BOLD, 14));
                 lblName.setBounds(40, 20, 200, 20);
                 rowPanel.add(lblName);
 
-                // 3. Price
                 JLabel lblPrice = new JLabel("Rp " + (long)harga);
                 lblPrice.setBounds(40, 45, 100, 20);
                 rowPanel.add(lblPrice);
 
-                // 4. Minus
                 JButton btnMin = new JButton("-");
                 btnMin.setBounds(300, 30, 40, 30);
                 btnMin.addActionListener(e -> updateQty(idKeranjang, qty - 1));
                 rowPanel.add(btnMin);
 
-                // 5. Qty
                 JTextField txtQty = new JTextField(String.valueOf(qty));
                 txtQty.setHorizontalAlignment(JTextField.CENTER);
                 txtQty.setEditable(false);
                 txtQty.setBounds(345, 30, 40, 30);
                 rowPanel.add(txtQty);
 
-                // 6. Plus
                 JButton btnPlus = new JButton("+");
                 btnPlus.setBounds(390, 30, 40, 30);
                 btnPlus.addActionListener(e -> updateQty(idKeranjang, qty + 1));
                 rowPanel.add(btnPlus);
 
-                // 7. Delete
                 JButton btnDel = new JButton("Delete");
                 btnDel.setBackground(Color.RED); 
                 btnDel.setForeground(Color.WHITE);
@@ -256,7 +246,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
     }
   
     private void updateQty(int idKeranjang, int newQty) {
-        if (newQty < 1) return; // Minimum 1
+        if (newQty < 1) return;
         
         try {
             Connection conn = Konektor.getConnection();
@@ -425,13 +415,13 @@ public class FrameKeranjang extends javax.swing.JFrame {
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(59, 59, 59))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -466,7 +456,7 @@ public class FrameKeranjang extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(checkoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -489,8 +479,8 @@ public class FrameKeranjang extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

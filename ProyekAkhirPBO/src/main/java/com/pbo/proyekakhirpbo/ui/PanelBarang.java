@@ -38,12 +38,13 @@ public class PanelBarang extends javax.swing.JPanel {
             while (rs.next()) {
                 String id = String.valueOf(rs.getInt("id_produk"));
                 String nama = rs.getString("nama_barang");
+                String deskripsi = rs.getString("deskripsi"); 
                 String stok = String.valueOf(rs.getInt("stok_barang"));
                 String harga = String.valueOf(rs.getDouble("harga_barang"));
                 
                 String gambarInfo = (rs.getBytes("image_barang") != null) ? "Ada Gambar" : "Tidak Ada";
 
-                model.addRow(new Object[]{id, gambarInfo, nama, stok, harga, "Edit/Hapus"});
+                model.addRow(new Object[]{id, gambarInfo, nama, deskripsi, stok, harga});
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
@@ -119,9 +120,17 @@ public class PanelBarang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID. Barang", "Gambar", "Nama Barang", "Stok", "Harga"
+                "ID. Barang", "Gambar", "Nama Barang", "Deskripsi", "Stok", "Harga"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tabelBarangButton.setRowHeight(30);
         jScrollPane1.setViewportView(tabelBarangButton);
 
@@ -209,12 +218,13 @@ public class PanelBarang extends javax.swing.JPanel {
 
         String id = tabelBarangButton.getValueAt(selectedRow, 0).toString();
         String nama = tabelBarangButton.getValueAt(selectedRow, 2).toString();
-        String stok = tabelBarangButton.getValueAt(selectedRow, 3).toString();
-        String harga = tabelBarangButton.getValueAt(selectedRow, 4).toString();
+        String deskripsi = tabelBarangButton.getValueAt(selectedRow, 3).toString(); 
+        String stok = tabelBarangButton.getValueAt(selectedRow, 4).toString();
+        String harga = tabelBarangButton.getValueAt(selectedRow, 5).toString();
 
         DialogTambahBarang dialog = new DialogTambahBarang(new javax.swing.JFrame(), true);
         
-        dialog.setEditData(id, nama, stok, harga); 
+        dialog.setEditData(id, nama, stok, harga, deskripsi); 
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
         
@@ -266,11 +276,12 @@ public class PanelBarang extends javax.swing.JPanel {
             while (rs.next()) {
                 String id = String.valueOf(rs.getInt("id_produk"));
                 String nama = rs.getString("nama_barang");
+                String deskripsi = rs.getString("deskripsi");
                 String stok = String.valueOf(rs.getInt("stok_barang"));
                 String harga = String.valueOf(rs.getDouble("harga_barang"));
                 String gambarInfo = (rs.getBytes("image_barang") != null) ? "Ada" : "Tidak";
 
-                model.addRow(new Object[]{id, gambarInfo, nama, stok, harga, "Edit/Hapus"});
+                model.addRow(new Object[]{id, gambarInfo, nama, deskripsi, stok, harga});
             }
         } catch (Exception e) {
             e.printStackTrace();

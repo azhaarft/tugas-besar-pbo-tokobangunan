@@ -237,9 +237,7 @@ public class FrameAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    // Method untuk ganti konten di panelKosong
 private void gantiHalaman(javax.swing.JPanel halamanBaru) {
-    //  Bersihkan panelKosong dari konten sebelumnya
     panelKosong.removeAll(); 
 
     panelKosong.add(halamanBaru);
@@ -267,7 +265,7 @@ private void gantiHalaman(javax.swing.JPanel halamanBaru) {
     }//GEN-LAST:event_logoutClickMouseClicked
 
     private void jLabel1ComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jLabel1ComponentHidden
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jLabel1ComponentHidden
 
     /**

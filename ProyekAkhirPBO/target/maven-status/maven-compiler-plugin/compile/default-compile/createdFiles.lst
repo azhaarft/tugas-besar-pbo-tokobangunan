@@ -26,6 +26,7 @@ com\pbo\proyekakhirpbo\ui\PanelBarang$1.class
 com\pbo\proyekakhirpbo\main\ProyekAkhirPBO.class
 com\pbo\proyekakhirpbo\ui\FrameSignIn$1.class
 com\pbo\proyekakhirpbo\ui\FrameSignUp.class
+com\pbo\proyekakhirpbo\main\ProyekAkhirPBO$1.class
 com\pbo\proyekakhirpbo\ui\FrameAdmin$1.class
 com\pbo\proyekakhirpbo\ui\DialogTransaksi$2.class
 com\pbo\proyekakhirpbo\ui\PanelBarang$4.class
@@ -40,11 +41,13 @@ com\pbo\proyekakhirpbo\model\user.class
 com\pbo\proyekakhirpbo\ui\FrameProfile$4.class
 com\pbo\proyekakhirpbo\ui\FrameDashboard$1.class
 com\pbo\proyekakhirpbo\ui\PanelBarang$2.class
+com\pbo\proyekakhirpbo\ui\FrameAdmin$5.class
 com\pbo\proyekakhirpbo\ui\FrameKeranjang.class
 com\pbo\proyekakhirpbo\ui\DialogTambahBarang$2.class
 com\pbo\proyekakhirpbo\ui\FrameProfile$1.class
 com\pbo\proyekakhirpbo\ui\FrameKeranjang$2.class
 com\pbo\proyekakhirpbo\ui\PanelTransaksi$2.class
 com\pbo\proyekakhirpbo\ui\FrameSignUp$2.class
+com\pbo\proyekakhirpbo\ui\PanelBarang$5.class
 com\pbo\proyekakhirpbo\ui\FrameAdmin$2.class
 com\pbo\proyekakhirpbo\ui\FrameKeranjang$5.class
